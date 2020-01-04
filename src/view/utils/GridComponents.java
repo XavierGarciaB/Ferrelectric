@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -22,10 +21,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 import models.Item;
 import models.Listable;
 import res.PATHS;
@@ -36,7 +34,6 @@ import res.PATHS;
  */
 public class GridComponents{
     private VBox root;
-    private GridPane contTitulos;
     private GridPane contComponents;
     private Button searchBtn;
     private ImageView addBtn;
@@ -52,7 +49,7 @@ public class GridComponents{
     public GridComponents(String headerTitle, Parent scenePrevia) throws FileNotFoundException{
         header = new Header(headerTitle);
         header.addBackEventListener(scenePrevia);
-        rowsNumber = 0;
+        rowsNumber = 1;
     }
 
     public Parent build(String[] nombreCampos, String[] nombreFiltros) throws FileNotFoundException {
@@ -63,7 +60,7 @@ public class GridComponents{
         
         crearCuerpo(nombreCampos);
         
-        root.getChildren().addAll(header.render(), contInicial, contTitulos, scroll);
+        root.getChildren().addAll(header.render(), contInicial, scroll);
         
         root.setPadding(new Insets(0, 0, 10, 0));
         
@@ -97,9 +94,7 @@ public class GridComponents{
     }
     
     private void crearCuerpo(String[] nombreCampos){
-        contTitulos = new GridPane();
-        //contComponentes.setVgap(20);
-        //contComponentes.setHgap(200);
+        contComponents = new GridPane();
         
         // Crea la cabecera de la tabla
         for(int i = 0; i < nombreCampos.length; i++){
@@ -108,11 +103,10 @@ public class GridComponents{
             StackPane nombrePane = new StackPane(nombre);
             nombrePane.getStyleClass().add("title_cont");
             GridPane.setConstraints(nombrePane, i, 0);
-            contTitulos.getChildren().add(nombrePane);
+            GridPane.setHgrow(nombrePane, Priority.ALWAYS);
+            contComponents.getChildren().add(nombrePane);
         }
-        contTitulos.getStyleClass().add("grid_title");
         
-        contComponents = new GridPane();
         contComponents.getStyleClass().add("grid_components");
         scroll = new ScrollPane(contComponents);
         scroll.setFitToWidth(true);
@@ -129,7 +123,9 @@ public class GridComponents{
                 Label value = new Label(values.get(i));
                 value.getStyleClass().add("grid_lbl");
                 StackPane contValue = new StackPane(value);
+                contValue.setStyle("-fx-border-color: white;");
                 contComponents.add(contValue, i, rowsNumber);
+                GridPane.setHgrow(contValue, Priority.ALWAYS);
             }
         }
         rowsNumber++;

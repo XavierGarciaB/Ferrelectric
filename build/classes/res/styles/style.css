@@ -72,6 +72,10 @@ and open the template in the editor.
     -fx-background-color:#fff;
 }
 
+.cont:hover{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.50), 8, 0.0, 0.0, 0.0);
+}
+
 .back_cont{
     -fx-border-radius: 3px;
     -fx-padding:.75em;
@@ -93,18 +97,10 @@ and open the template in the editor.
     -fx-fill-text:#fff;
 }
 
-.grid_title{
-    -fx-padding: 3;
-    -fx-background-color: #2196f3;
-    -fx-border-color: white;
-    -fx-hgap: 100;
-}
-
 .grid_components{
     -fx-padding: 3;
     -fx-background-color: #E6E6FA;
     -fx-border-color: white;
-    -fx-hgap: 200;
 }
 
 .grid_lbl{
@@ -114,7 +110,8 @@ and open the template in the editor.
 }
 
 .title_cont{
-    -fx-padding: 10;
-
+    -fx-padding: 5;
+    -fx-background-color: #2196f3;
+    -fx-border-color: white;
 }
 
