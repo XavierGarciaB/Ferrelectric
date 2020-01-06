@@ -13,6 +13,7 @@ import javafx.stage.Stage;
  *
  * @author ADMIN
  */
+
 public class CentroTabla extends Application {
     //ME DA PROBLEMAS LA FECHA
     @Override

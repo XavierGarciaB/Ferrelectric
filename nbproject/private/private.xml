@@ -2,6 +2,11 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/ADMIN/Documents/NetBeansProjects/Ferrelectric/src/ferrelectric/sbd/FerrelectricSBD.java</file>
+            <file>file:/C:/Users/ADMIN/Documents/NetBeansProjects/Ferrelectric/src/Tablas/Tablas.java</file>
+            <file>file:/C:/Users/ADMIN/Documents/NetBeansProjects/Ferrelectric/src/Tablas/CargarFactura.java</file>
+            <file>file:/C:/Users/ADMIN/Documents/NetBeansProjects/Ferrelectric/src/Tablas/CentroTabla.java</file>
+        </group>
     </open-files>
 </project-private>

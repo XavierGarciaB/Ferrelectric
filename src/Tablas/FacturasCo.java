@@ -16,16 +16,16 @@ public class FacturasCo {
     String no;
     double total;
     int cantidad;
-    String nombre;
+    String cliente;
     //Date fecha;
     String descripcion;
     String direccion;
 
-    public FacturasCo(String no, double total, int cantidad,String nombre, /*Date fecha,*/ String descripcion, String direccion) {
+    public FacturasCo(String no, double total, int cantidad,String cliente, /*Date fecha,*/ String descripcion, String direccion) {
         this.no = no;
         this.total = total;
         this.cantidad = cantidad;
-        this.nombre = nombre;
+        this.cliente = cliente;
         //this.fecha = fecha;
         this.descripcion = descripcion;
         this.direccion = direccion;
@@ -45,15 +45,7 @@ public class FacturasCo {
 
     public void setTotal(int total) {
         this.total = total;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    } 
     
 //    public Date getFecha() {
 //        return fecha;
@@ -81,7 +73,23 @@ public class FacturasCo {
 
     @Override
     public String toString() {
-        return "FacturasCo{" + "no=" + no + ", total=" + total + ", cantidad=" + cantidad + ", nombre=" + nombre + ", descripcion=" + descripcion + ", direccion=" + direccion + '}';
+        return "FacturasCo{" + "no=" + no + ", total=" + total + ", cantidad=" + cantidad + ", nombre=" + cliente + ", descripcion=" + descripcion + ", direccion=" + direccion + '}';
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public String getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
     }
     
     
