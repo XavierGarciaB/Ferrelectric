@@ -9,6 +9,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 
 /**
@@ -29,11 +33,14 @@ public class CargarFactura {
                 double total= Double.valueOf(linea.split(",")[1]);
                 int cantidad= Integer.valueOf(linea.split(",")[2]);
                 String nombre= linea.split(",")[3].toUpperCase();
-                //Date fecha= new Date(Integer.decode((linea.split(",")[4])));
+                //CREA LA FECHA
+                LocalDate date = LocalDate.of(Integer.valueOf(linea.split(",")[4].split("-")[2]),
+                                                Integer.valueOf(linea.split(",")[4].split("-")[1]),
+                                                Integer.valueOf(linea.split(",")[4].split("-")[0]));
+                Date fecha = Date.valueOf(date);
                 String descripcion= linea.split(",")[5].toUpperCase();
                 String direccion= linea.split(",")[6].toUpperCase();
-                
-                facturas.add(new FacturasCo(no, total, cantidad, nombre, /*fecha,*/ descripcion, direccion));                
+                facturas.add(new FacturasCo(no, total, cantidad, nombre, fecha, descripcion, direccion));                
             }                                             
         }catch(FileNotFoundException fnex){
             System.out.println("No se pudo leer el archivo");

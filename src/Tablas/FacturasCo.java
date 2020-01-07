@@ -5,8 +5,10 @@
  */
 package Tablas;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import models.Listable;
 
@@ -20,16 +22,16 @@ public class FacturasCo implements Listable{
     double total;
     int cantidad;
     String cliente;
-    //Date fecha;
+    Date fecha;
     String descripcion;
     String direccion;
 
-    public FacturasCo(String no, double total, int cantidad,String cliente, /*Date fecha,*/ String descripcion, String direccion) {
+    public FacturasCo(String no, double total, int cantidad,String cliente, Date fecha, String descripcion, String direccion) {
         this.no = no;
         this.total = total;
         this.cantidad = cantidad;
         this.cliente = cliente;
-        //this.fecha = fecha;
+        this.fecha = fecha;
         this.descripcion = descripcion;
         this.direccion = direccion;
     }        
@@ -50,13 +52,13 @@ public class FacturasCo implements Listable{
         this.total = total;
     } 
     
-//    public Date getFecha() {
-//        return fecha;
-//    }
-//
-//    public void setFecha(Date fecha) {
-//        this.fecha = fecha;
-//    }
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
 
     public String getDescripcion() {
         return descripcion;
@@ -76,7 +78,7 @@ public class FacturasCo implements Listable{
 
     @Override
     public String toString() {
-        return "FacturasCo{" + "no=" + no + ", total=" + total + ", cantidad=" + cantidad + ", nombre=" + cliente + ", descripcion=" + descripcion + ", direccion=" + direccion + '}';
+        return "FacturasCo{" + "no=" + no + ", total=" + total + ", cantidad=" + cantidad + ", fecha=" + fecha.toString() + ", nombre=" + cliente + ", descripcion=" + descripcion + ", direccion=" + direccion + '}';
     }
 
     public int getCantidad() {
@@ -98,7 +100,13 @@ public class FacturasCo implements Listable{
     @Override
     public List<String> getValues() {
         List<String> lista =  new ArrayList<>();
-        lista.add(no);lista.add(String.valueOf(total));lista.add(String.valueOf(cantidad));lista.add(cliente);lista.add(descripcion);lista.add(direccion);
+        lista.add(no);
+        lista.add(String.valueOf(total));
+        lista.add(String.valueOf(cantidad));
+        lista.add(cliente);
+        lista.add(new SimpleDateFormat("dd/MM/yyyy").format(fecha));
+        lista.add(descripcion);
+        lista.add(direccion);
         return lista;
     }
     

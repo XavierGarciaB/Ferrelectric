@@ -37,7 +37,7 @@ public class GridComponents{
     private VBox root;
     private GridPane contComponents;
     private Button searchBtn;
-    private ImageView addBtn;
+    private StackPane addBtn;
     private TextField input;
     private ComboBox filtros;
     private Label lblFiltro;
@@ -81,10 +81,12 @@ public class GridComponents{
         contBusqueda.getChildren().addAll(lblFiltro, input, filtros, searchBtn);
         contBusqueda.setSpacing(10);
         
-        addBtn = new ImageView(new Image(new FileInputStream(PATHS.IMAGE_PATH+"add-icon.png")));
-        addBtn.setFitHeight(35);
-        addBtn.setFitWidth(35);
-        addBtn.setPreserveRatio(true);
+        ImageView add = new ImageView(new Image(new FileInputStream(PATHS.IMAGE_PATH+"add-icon.png")));
+        add.setFitHeight(35);
+        add.setFitWidth(35);
+        add.setPreserveRatio(true);
+        addBtn = new StackPane(add);
+        addBtn.getStyleClass().add("add_btn");
         
         contInicial = new AnchorPane();
         AnchorPane.setRightAnchor(addBtn, 10.0);
@@ -116,10 +118,9 @@ public class GridComponents{
     }
     
     public void addRow(Listable row){
-        if(row instanceof Item){
-            Item item = (Item) row;
-            List<String> values = item.getValues();
-            for(int i=0; i < values.size(); i++){
+        // No hay necesidad de separar por casos
+        List<String> values = row.getValues();
+        for(int i=0; i < values.size(); i++){
                 Label value = new Label(values.get(i));
                 value.getStyleClass().add("grid_lbl");
                 StackPane contValue = new StackPane(value);
@@ -127,19 +128,6 @@ public class GridComponents{
                 contComponents.add(contValue, i, rowsNumber);
                 GridPane.setHgrow(contValue, Priority.ALWAYS);
             }
-        }
-        if(row instanceof FacturasCo){
-            FacturasCo item = (FacturasCo) row;
-            List<String> values = item.getValues();
-            for(int i=0; i < values.size(); i++){
-                Label value = new Label(values.get(i));
-                value.getStyleClass().add("grid_lbl");
-                StackPane contValue = new StackPane(value);
-                contValue.setStyle("-fx-border-color: white;");
-                contComponents.add(contValue, i, rowsNumber);
-                GridPane.setHgrow(contValue, Priority.ALWAYS);
-            }
-        }
         rowsNumber++;
     }
     

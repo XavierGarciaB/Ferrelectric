@@ -19,19 +19,21 @@ import view.utils.GridComponents;
  */
 public class VentasView extends GridComponents{
     private VBox root;
-    private String[] nombreCampos = {"No. Factura","Total","Cantidad","Cliente","Descripcion","Direccion"};
+    private String[] nombreCampos = {"No. Factura","Total","Cantidad","Cliente","Fecha","Descripcion","Direccion"};
     private String[] nombreFiltros = {"Num. Factura","Cliente","Cédula","Fecha"};
     
     public VentasView() throws FileNotFoundException{
         super("Ventas", new MainMenuView().build());
-        CargarFactura.leerArchivo();
-        for(FacturasCo fac: CargarFactura.getFacturas()){
-            addRow(fac);
-        }
+        
     }
 
     public Parent build() throws FileNotFoundException {
         root = (VBox) super.build(nombreCampos, nombreFiltros);
+        
+        CargarFactura.leerArchivo();
+        for(FacturasCo fac: CargarFactura.getFacturas()){
+            addRow(fac);
+        }
         
         return root;
     }

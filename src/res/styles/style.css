@@ -115,3 +115,7 @@ and open the template in the editor.
     -fx-border-color: white;
 }
 
+.add_btn:hover{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .24), 5, 0.0, 0.0, 0.0);
+}
+
