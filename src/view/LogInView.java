@@ -5,8 +5,10 @@
  */
 package view;
 
+import MySQL.Connector;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
@@ -25,6 +27,12 @@ import javafx.scene.layout.VBox;
 public class LogInView implements View{
     private GridPane root;
     private VBox mainRoot;
+    private static Connection conexion;
+    
+    public LogInView(){
+        Connector conn = new Connector();
+        conexion = conn.getConnection();
+    }
 
     @Override
     public Parent build() {
@@ -73,6 +81,5 @@ public class LogInView implements View{
             }
         });
     }
-
     
 }
