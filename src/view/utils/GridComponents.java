@@ -5,6 +5,7 @@
  */
 package view.utils;
 
+import Tablas.FacturasCo;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -54,6 +55,8 @@ public class GridComponents{
 
     public Parent build(String[] nombreCampos, String[] nombreFiltros) throws FileNotFoundException {
         root = new VBox();
+        contComponents = new GridPane();
+        scroll = new ScrollPane(contComponents);
         root.setSpacing(10);
         
         crearBusqueda(nombreFiltros);
@@ -63,11 +66,7 @@ public class GridComponents{
         root.getChildren().addAll(header.render(), contInicial, scroll);
         
         root.setPadding(new Insets(0, 0, 10, 0));
-        
-        for(int i = 0; i<30; i++){
-            Item item = new Item("PRUEBA","PRUEBA","PRUEBA",0.0,0);
-            addRow(item);
-        }
+                
         
         return root;
     }
@@ -91,10 +90,11 @@ public class GridComponents{
         AnchorPane.setRightAnchor(addBtn, 10.0);
         AnchorPane.setLeftAnchor(contBusqueda, 10.0);
         contInicial.getChildren().addAll(contBusqueda, addBtn);
+        
     }
     
     private void crearCuerpo(String[] nombreCampos){
-        contComponents = new GridPane();
+        
         
         // Crea la cabecera de la tabla
         for(int i = 0; i < nombreCampos.length; i++){
@@ -108,7 +108,7 @@ public class GridComponents{
         }
         
         contComponents.getStyleClass().add("grid_components");
-        scroll = new ScrollPane(contComponents);
+        
         scroll.setFitToWidth(true);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll.hbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -118,6 +118,18 @@ public class GridComponents{
     public void addRow(Listable row){
         if(row instanceof Item){
             Item item = (Item) row;
+            List<String> values = item.getValues();
+            for(int i=0; i < values.size(); i++){
+                Label value = new Label(values.get(i));
+                value.getStyleClass().add("grid_lbl");
+                StackPane contValue = new StackPane(value);
+                contValue.setStyle("-fx-border-color: white;");
+                contComponents.add(contValue, i, rowsNumber);
+                GridPane.setHgrow(contValue, Priority.ALWAYS);
+            }
+        }
+        if(row instanceof FacturasCo){
+            FacturasCo item = (FacturasCo) row;
             List<String> values = item.getValues();
             for(int i=0; i < values.size(); i++){
                 Label value = new Label(values.get(i));

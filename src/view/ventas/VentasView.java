@@ -5,6 +5,8 @@
  */
 package view.ventas;
 
+import Tablas.CargarFactura;
+import Tablas.FacturasCo;
 import java.io.FileNotFoundException;
 import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
@@ -17,11 +19,15 @@ import view.utils.GridComponents;
  */
 public class VentasView extends GridComponents{
     private VBox root;
-    private String[] nombreCampos = {"Num. Factura","Cliente","Cédula","Fecha","Detalle Venta"};
+    private String[] nombreCampos = {"No. Factura","Total","Cantidad","Cliente","Descripcion","Direccion"};
     private String[] nombreFiltros = {"Num. Factura","Cliente","Cédula","Fecha"};
     
     public VentasView() throws FileNotFoundException{
         super("Ventas", new MainMenuView().build());
+        CargarFactura.leerArchivo();
+        for(FacturasCo fac: CargarFactura.getFacturas()){
+            addRow(fac);
+        }
     }
 
     public Parent build() throws FileNotFoundException {

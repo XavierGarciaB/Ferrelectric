@@ -5,13 +5,16 @@
  */
 package Tablas;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import models.Listable;
 
 /**
  *
  * @author ADMIN
  */
-public class FacturasCo {  
+public class FacturasCo implements Listable{  
     //ME DA PROBLEMAS LA FECHA
     String no;
     double total;
@@ -90,6 +93,13 @@ public class FacturasCo {
 
     public void setCliente(String cliente) {
         this.cliente = cliente;
+    }
+
+    @Override
+    public List<String> getValues() {
+        List<String> lista =  new ArrayList<>();
+        lista.add(no);lista.add(String.valueOf(total));lista.add(String.valueOf(cantidad));lista.add(cliente);lista.add(descripcion);lista.add(direccion);
+        return lista;
     }
     
     
