@@ -30,7 +30,7 @@ public class VentasView extends GridComponents{
     
     public VentasView() throws FileNotFoundException{
         super("Ventas", new MainMenuView().build());
-        probandoConector();
+
     }
 
     public Parent build() throws FileNotFoundException {
@@ -43,19 +43,5 @@ public class VentasView extends GridComponents{
         
         return root;
     }
-    
-    public void probandoConector(){
-        try {
-            PreparedStatement ps = Connector.getConnection().prepareStatement("SELECT * FROM cliente WHERE Cedula = '0951658897';");
-            ResultSet result = ps.executeQuery();
-            if(result.next()){
-                System.out.println(result.getString("Cedula"));
-                System.out.println(result.getString("Nombre"));
-                System.out.println(result.getString("Direccion"));
-                System.out.println(result.getString("Telefono"));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(VentasView.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+
 }

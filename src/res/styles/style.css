@@ -19,7 +19,7 @@ and open the template in the editor.
 .logIn_input{
     -fx-background-color: null;
     -fx-text-fill: #C0C0C0;
-    -fx-font-size: 15;
+    -fx-font-size: 20;
     -fx-font-weight: 200;
     -fx-border-color: linear-gradient(#87CEEB, #2196f3);
     -fx-border-radius: 5;

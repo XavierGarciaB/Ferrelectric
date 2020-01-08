@@ -17,13 +17,11 @@ import java.util.logging.Logger;
  */
 public class Connector {
     private static Connection conexion;
-    // private static final String driver = "com.mysql.jdbc.Driver";
-    private static final String user = "pma";
-    private static final String password = "PASSWORD";
-    // private static final String url = "jdbc:mysql://localhost:3306/mydb";
+    private static final String user = "pma";  // COLOCAR SU USUARIO    
+    private static final String password = "PASSWORD";  // COLOCAR SU CONTRASEÑA
     private static final String url = "jdbc:mysql://localhost:3306/mydb?serverTimezone=UTC";
     
-    public Connector(){
+    public static Connection getConnection(){
         conexion = null;
         try{
             // Class.forName(driver);
@@ -33,13 +31,11 @@ public class Connector {
         } catch (SQLException ex) {
             Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    public static Connection getConnection(){
+        
         return conexion;
     }
     
-    public void desconectar(){
+    public static void desconectar(){
         conexion = null;
         if(conexion == null)
             System.out.println("Conexión terminada");

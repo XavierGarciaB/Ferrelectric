@@ -5,6 +5,8 @@
  */
 package ferrelectric.sbd;
 
+import MySQL.Connector;
+import controller.DBController;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -33,7 +35,13 @@ public class FerrelectricSBD extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        //EMPIEZA LA CONEXION CON LA BASE DE DATOS
+        DBController.conectarBD();
+        
         launch(args);
+        
+        //CIERRA LA CONEXION CON LA BASE DE DATOS
+        Connector.desconectar();
     }
     
     public static void setScene(Parent newRoot){

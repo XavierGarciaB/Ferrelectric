@@ -5,15 +5,18 @@
  */
 package view;
 
-import MySQL.Connector;
+import controller.DBController;
+import static controller.DBController.existeUsuario;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -26,12 +29,11 @@ import javafx.scene.layout.VBox;
  */
 public class LogInView implements View{
     private GridPane root;
+    private TextField nombreInput, passwordInput;
     private VBox mainRoot;
-    private static Connection conexion;
     
     public LogInView(){
-        Connector conn = new Connector();
-        conexion = conn.getConnection();
+        
     }
 
     @Override
@@ -46,7 +48,7 @@ public class LogInView implements View{
         nombreLabel.getStyleClass().add("logIn_lbl");
         GridPane.setConstraints(nombreLabel, 0, 0);
         
-        TextField nombreInput = new TextField();
+        nombreInput = new TextField();
         nombreInput.getStyleClass().add("logIn_input");
         GridPane.setConstraints(nombreInput, 1, 0);
         
@@ -54,7 +56,7 @@ public class LogInView implements View{
         passwordLabel.getStyleClass().add("logIn_lbl");
         GridPane.setConstraints(passwordLabel, 0, 1);
         
-        TextField passwordInput = new TextField();
+        passwordInput = new TextField();
         passwordInput.getStyleClass().add("logIn_input");
         GridPane.setConstraints(passwordInput, 1, 1);
         
@@ -75,8 +77,18 @@ public class LogInView implements View{
     private void logInAction(Button btn){
         btn.setOnAction(e ->{
             try {
-                FerrelectricSBD.setScene(new MainMenuView().build());
+                if(existeUsuario(nombreInput.getText(), passwordInput.getText()))
+                    FerrelectricSBD.setScene(new MainMenuView().build());
+                else{
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Ingreso no concedido");
+                    alert.setHeaderText("Error al ingresar");
+                    alert.setContentText("Usuario o Contraseña incorrecta");
+                    alert.showAndWait();
+                }
             } catch (FileNotFoundException ex) {
+                Logger.getLogger(LogInView.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
                 Logger.getLogger(LogInView.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
