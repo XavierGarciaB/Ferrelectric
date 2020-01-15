@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controller;
+package MySQL;
 
 /**
  *
  * @author xavic
  */
-public class ItemController {
-    
+public class Queries {
+    public static final String getItems = "SELECT nombre, marca, costo FROM item";
 }

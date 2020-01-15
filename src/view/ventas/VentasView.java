@@ -5,15 +5,9 @@
  */
 package view.ventas;
 
-import MySQL.Connector;
 import Tablas.CargarFactura;
 import Tablas.FacturasCo;
 import java.io.FileNotFoundException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
 import view.MainMenuView;

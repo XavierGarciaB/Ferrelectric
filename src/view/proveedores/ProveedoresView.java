@@ -18,7 +18,7 @@ import view.utils.GridComponents;
 public class ProveedoresView extends GridComponents{
     private VBox root;
     private String[] nombreCampos = {"Num. Factura","Proveedor","RUC","Fecha","Detalle Compra"};
-    private String[] nombreFiltros = {"Num. Factura", "Proveedor", "RUC", "Fecha"};
+    private String[] nombreFiltros = {"Num. Factura", "Proveedor", "RUC","Costo total", "Fecha"};
     
     public ProveedoresView() throws FileNotFoundException{
         super("Proveedores", new MainMenuView().build());

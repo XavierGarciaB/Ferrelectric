@@ -9,7 +9,6 @@ import controller.DBController;
 import static controller.DBController.existeUsuario;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,9 +30,10 @@ public class LogInView implements View{
     private GridPane root;
     private TextField nombreInput, passwordInput;
     private VBox mainRoot;
+    private DBController dbController;
     
     public LogInView(){
-        
+        dbController = new DBController();
     }
 
     @Override
