@@ -66,5 +66,16 @@ public class DBController {
         return items;
     }
     
+    public static void pruebaModificacion(){        
+        try {
+            PreparedStatement ps = conn.prepareStatement("update empleado set pass='0987654321' where idEmpleado=2");            
+            if (!ps.execute()){
+                System.out.println("Prueba realizada");
+            }
+                                    
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 }

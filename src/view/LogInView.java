@@ -70,6 +70,7 @@ public class LogInView implements View{
         mainRoot.getChildren().addAll(root, logIn);
         mainRoot.setSpacing(20);
         mainRoot.setAlignment(Pos.CENTER);
+        DBController.pruebaModificacion();
         
         return mainRoot;
     }

@@ -36,8 +36,7 @@ public class FerrelectricSBD extends Application {
      */
     public static void main(String[] args) {
         //EMPIEZA LA CONEXION CON LA BASE DE DATOS
-        Connector.conectar();
-        
+        Connector.conectar();        
         launch(args);
         
         //CIERRA LA CONEXION CON LA BASE DE DATOS
