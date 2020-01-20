@@ -16,13 +16,13 @@ public class Item implements Listable {
     private String nombre;
     private String marca;
     private double precioUnidad;
-    //private int cantidad;
+    private int cantidad;
 
-    public Item(String nombre, String marca, double precioUnidad /*int cantidad*/) {
+    public Item(String nombre, String marca, double precioUnidad, int cantidad) {
         this.nombre = nombre;
         this.marca = marca;
         this.precioUnidad = precioUnidad;
-        //this.cantidad = cantidad;
+        this.cantidad = cantidad;
     }
 
     public String getNombre() {
@@ -49,13 +49,13 @@ public class Item implements Listable {
         this.precioUnidad = precioUnidad;
     }
 
-//    public int getCantidad() {
-//        return cantidad;
-//    }
-//
-//    public void setCantidad(int cantidad) {
-//        this.cantidad = cantidad;
-//    }
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
 
     @Override
     public List<String> getValues() {
@@ -63,7 +63,7 @@ public class Item implements Listable {
         values.add(nombre);
         values.add(marca);
         values.add(String.valueOf(precioUnidad));
-        //values.add(String.valueOf(cantidad));
+        values.add(String.valueOf(cantidad));
         return values;
     }
     

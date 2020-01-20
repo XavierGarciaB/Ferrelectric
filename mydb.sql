@@ -7,9 +7,11 @@ create table Item(
     # material varchar(45) not null,
     marca varchar(30) not null,
     costo float not null,
+    cantidad int not null default 0,
     primary key(idItem)
 );
 
+/****
 create table Lote(
 	idLote int not null,
     nombreArticulo varchar(45) not null,
@@ -18,14 +20,14 @@ create table Lote(
     primary key(idLote),
     foreign key(idItem) references Item(idItem)
 );
+****/
 
 create table Empleado(
-	idEmpleado int not null auto_increment,
     cedula varchar(10) not null,
     nombre varchar(45) not null,
     administrador boolean not null,
     pass varchar(16) not null,
-    primary key (idEmpleado)
+    primary key (cedula)
 );
 
 create table Cliente(
@@ -37,23 +39,23 @@ create table Cliente(
 );
 
 create table Factura(
-	idFactura int not null,
+	numFactura int not null,
     costoTotal float not null,
     cedula varchar(10) not null,
-    idEmpleado int not null,
-    primary key(idFactura),
+    cedulaEmpleado varchar(10) not null,
+    primary key(numFactura),
     foreign key (cedula) references Cliente(cedula),
-    foreign key (idEmpleado) references Empleado(idEmpleado)
+    foreign key (cedulaEmpleado) references Empleado(cedula)
 );
 
 create table DescripcionVenta(
-	idVenta int not null,
+	idVenta int not null auto_increment,
     cantidad int not null,
     costo float not null,
-    idFactura int not null,
+    numFactura int not null,
     idItem int not null,
     primary key (idVenta),
-    foreign key (idFactura) references Factura(idFactura),
+    foreign key (numFactura) references Factura(numFactura),
     foreign key (idItem) references Item(idItem)
 );
 
@@ -61,29 +63,28 @@ create table Proveedor(
 	idProveedor int not null auto_increment,
     nombre varchar(45) not null,
     ruc varchar(15) not null,
-    telefono varchar(10) not null,
+    telefono varchar(10) not null default '000000',
     primary key (idProveedor)
 );
 
 create table CompraProveedor(
-	idCompra int not null auto_increment,
+	numFactura int not null,
     fecha date not null,
     costoTotal float not null,
-    idEmpleado int not null,
+    cedulaEmpleado varchar(10) not null,
     idProveedor int not null,
-    primary key (idCompra),
-    foreign key (idEmpleado) references Empleado(idEmpleado),
+    primary key (numFactura),
+    foreign key (cedulaEmpleado) references Empleado(cedula),
     foreign key (idProveedor) references Proveedor(idProveedor)
 );
 
 create table DetalleCompra(
 	idDetalleCompra int not null auto_increment,
     cantidad int not null,
-    costoTotal double not null,
-    idCompra int not null,
+    numFactura int not null,
     idItem int not null,
     primary key (idDetalleCompra),
-    foreign key (idCompra) references CompraProveedor(idCompra),
+    foreign key (numFactura) references CompraProveedor(numFactura),
     foreign key (idItem) references Item(idItem)
 );
 
@@ -92,14 +93,14 @@ create table DetalleCompra(
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`) VALUES ('CINTA TOLSEN AISLANTE ROJA 10Y', 0.35, 'Tolsen');
-INSERT INTO `mydb`.`Item` (`Nombre`,`Costo`, `Marca`) VALUES ('PEGAMENTO SUPER BONDER 3GR', 1.57, 'Bonder');
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`) VALUES ('DADO TOLSEN HEXAGONAL MANDO 1/2 9MM', 0.85, 'Tolsen');
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`) VALUES ('SPRAY EVANS BLANCO HUESO', 1.75, 'Evans');
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`) VALUES ('SPRAY EVANS MARFIL 127', 1.75, 'Evans');
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`) VALUES ('SPRAY EVANS AZUL ESPANOL 219', 1.75, 'Evans');
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`) VALUES ('LLAVE STANLEY CORONA 10 - 11', 1.34, 'Stanley');
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`) VALUES ('CANALETA 39X19', 1.84, 'Desconocido');
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CINTA TOLSEN AISLANTE ROJA 10Y', 0.35, 'Tolsen',50);
+INSERT INTO `mydb`.`Item` (`Nombre`,`Costo`, `Marca`,`Cantidad`) VALUES ('PEGAMENTO SUPER BONDER 3GR', 1.57, 'Bonder',15);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('DADO TOLSEN HEXAGONAL MANDO 1/2 9MM', 0.85, 'Tolsen',300);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY EVANS BLANCO HUESO', 1.75, 'Evans',40);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY EVANS MARFIL 127', 1.75, 'Evans',40);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY EVANS AZUL ESPANOL 219', 1.75, 'Evans',30);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('LLAVE STANLEY CORONA 10 - 11', 1.34, 'Stanley',50);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CANALETA 39X19', 1.84, 'Desconocido',29);
 
 COMMIT;
 
@@ -108,8 +109,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Empleado` (`Cedula`, `Nombre`, `Administrador`, `Pass`) VALUES ('0951600897', 'Edwin Eras', true, '123456789');
-INSERT INTO `mydb`.`Empleado` (`Cedula`, `Nombre`, `Administrador`, `Pass`) VALUES ('0924691127', 'La dueña del local', true, '123456789');
+INSERT INTO `mydb`.`Empleado` (`Cedula`, `Nombre`, `Administrador`, `Pass`) VALUES ('0951600897', 'Edwin Eras', true, '123');
+INSERT INTO `mydb`.`Empleado` (`Cedula`, `Nombre`, `Administrador`, `Pass`) VALUES ('0924691127', 'La dueña del local', true, '123');
 
 COMMIT;
 
@@ -130,9 +131,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Factura` (`idFactura`, `costoTotal`, `idEmpleado`, `cedula`) VALUES (11, 1.50, '1', '0951658897');
-INSERT INTO `mydb`.`Factura` (`idFactura`, `costoTotal`, `idEmpleado`, `cedula`) VALUES (12, 8.25, '1', '0951658897');
-INSERT INTO `mydb`.`Factura` (`idFactura`, `costoTotal`, `idEmpleado`, `cedula`) VALUES (13, 10.00, '1', '0951658897');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`) VALUES (000000001, 1.50, '0951600897', '0991475627');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`) VALUES (000000002, 8.25, '0951600897', '0991475627');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`) VALUES (000000003, 10.00, '0924691127', '0951658897');
 
 COMMIT;
 
@@ -154,9 +155,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`CompraProveedor` (`Fecha`, `CostoTotal`, `idProveedor`, `idEmpleado`) VALUES ('2019/09/07', 10.27, 1, '1');
-INSERT INTO `mydb`.`CompraProveedor` (`Fecha`, `CostoTotal`, `idProveedor`, `idEmpleado`) VALUES ('2019/09/06', 13.35, 3, '2');
-INSERT INTO `mydb`.`CompraProveedor` (`Fecha`, `CostoTotal`, `idProveedor`, `idEmpleado`) VALUES ('2019/09/08', 15.00, 2, '1');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `CostoTotal`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000001', '2019/09/07', 10.27, 1, '0951600897');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `CostoTotal`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000002', '2019/09/06', 13.35, 3, '0951600897');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `CostoTotal`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000003', '2019/09/08', 15.00, 2, '0924691127');
 
 COMMIT;
 
@@ -166,8 +167,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `costoTotal`, `idItem`, `idCompra`) VALUES (5, 15, 1, 1);
-INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `costoTotal`, `idItem`, `idCompra`) VALUES (10, 25, 3, 2);
-INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `costoTotal`, `idItem`, `idCompra`) VALUES (10, 30, 1, 3);
+INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `idItem`, `numFactura`) VALUES (5, 1, '000000001');
+INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `idItem`, `numFactura`) VALUES (10, 3, '000000002');
+INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `idItem`, `numFactura`) VALUES (10, 1, '000000003');
 
-COMMIT
+COMMIT;

@@ -6,7 +6,6 @@
 package ferrelectric.sbd;
 
 import MySQL.Connector;
-import controller.DBController;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

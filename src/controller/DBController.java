@@ -12,11 +12,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import models.CompraProveedor;
 import models.Item;
-import models.Listable;
 
 /**
  *
@@ -56,7 +57,8 @@ public class DBController {
                 String nombre = result.getString("nombre");
                 String marca = result.getString("marca");
                 double precioUnitario = result.getDouble("costo");
-                items.add(new Item(nombre, marca, precioUnitario));                 
+                int cantidad = result.getInt("cantidad");
+                items.add(new Item(nombre, marca, precioUnitario, cantidad));                 
             }
             
         } catch (SQLException ex) {
@@ -66,16 +68,27 @@ public class DBController {
         return items;
     }
     
-    public static void pruebaModificacion(){        
+    public List<CompraProveedor> getComprasProveedor(){
+        List<CompraProveedor> proveedores = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("update empleado set pass='0987654321' where idEmpleado=2");            
-            if (!ps.execute()){
-                System.out.println("Prueba realizada");
+            PreparedStatement ps = conn.prepareStatement(Queries.getCompraProveedor);
+            ResultSet result = ps.executeQuery();
+            
+            while(result.next()){
+                String numFactura = String.valueOf(result.getInt("numfactura"));
+                String nombre = result.getString("nombre");
+                String ruc = result.getString("ruc");
+                Date fecha = result.getDate("fecha");
+                double total = result.getDouble("total");
+                String detalleCompra = String.valueOf(result.getInt("DetalleCompra"));
+                proveedores.add(new CompraProveedor(numFactura, nombre, ruc, fecha, total, detalleCompra));                 
             }
-                                    
+            
         } catch (SQLException ex) {
             Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        return proveedores;
     }
 
 }

@@ -5,7 +5,8 @@
  */
 package view.utils;
 
-import Tablas.FacturasCo;
+import controller.DBController;
+import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -36,7 +37,7 @@ public class GridComponents{
     private VBox root;
     private GridPane contComponents;
     private Button searchBtn;
-    private StackPane addBtn;
+    protected StackPane addBtn;
     private TextField input;
     private ComboBox filtros;
     private Label lblFiltro;
@@ -45,8 +46,10 @@ public class GridComponents{
     private ScrollPane scroll;
     private Header header;
     private int rowsNumber;
+    protected DBController dbController;
     
     public GridComponents(String headerTitle, Parent scenePrevia) throws FileNotFoundException{
+        dbController = new DBController();
         header = new Header(headerTitle);
         header.addBackEventListener(scenePrevia);
         rowsNumber = 1;
@@ -95,8 +98,6 @@ public class GridComponents{
     }
     
     private void crearCuerpo(String[] nombreCampos){
-        
-        
         // Crea la cabecera de la tabla
         for(int i = 0; i < nombreCampos.length; i++){
             Label nombre = new Label(nombreCampos[i]);
