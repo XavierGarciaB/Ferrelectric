@@ -10,6 +10,8 @@ import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -26,8 +28,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import models.CompraProveedor;
 import models.Listable;
+import models.Venta;
 import res.PATHS;
+import view.proveedores.DetalleCompra;
+import view.ventas.DetalleVenta;
 
 /**
  *
@@ -124,11 +130,34 @@ public class GridComponents{
                 Label value = new Label(values.get(i));
                 value.getStyleClass().add("grid_lbl");
                 StackPane contValue = new StackPane(value);
+                // PROBANDO LLEVAR LA REFERENCIA
+                asignarReferencia(contValue, row);
                 contValue.setStyle("-fx-border-color: white;");
                 contComponents.add(contValue, i, rowsNumber);
                 GridPane.setHgrow(contValue, Priority.ALWAYS);
             }
         rowsNumber++;
+    }
+    
+    private void asignarReferencia(Parent cont, Listable row){
+        cont.setOnMouseClicked(e ->{
+            if(row instanceof Venta){
+                try {
+                    Venta venta = (Venta) row;
+                    FerrelectricSBD.setScene(new DetalleVenta(venta).build());
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(GridComponents.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if(row instanceof CompraProveedor){
+                try {
+                    CompraProveedor compra = (CompraProveedor) row;
+                    FerrelectricSBD.setScene(new DetalleCompra(compra).build());
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(GridComponents.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
     }
     
     

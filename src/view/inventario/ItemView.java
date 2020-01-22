@@ -5,6 +5,7 @@
  */
 package view.inventario;
 
+import controller.DBController;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
@@ -97,6 +98,7 @@ public class ItemView implements View {
                     double precioUnitario = Double.parseDouble(inputPU.getText());
                     int cantidad = Integer.parseInt(inputCantidad.getText());
                     Item item = new Item(nombre, marca, precioUnitario, cantidad);
+                    DBController.insertItem(item);
                     this.accept().showAndWait();
                     FerrelectricSBD.setScene(new InventarioView().build());
                 } catch (FileNotFoundException ex) {

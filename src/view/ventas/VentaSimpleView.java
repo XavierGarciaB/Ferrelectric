@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view.proveedores;
+package view.ventas;
 
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
@@ -17,16 +17,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import models.CompraProveedor;
+import models.Venta;
 import view.View;
 import view.inventario.ItemView;
+import view.proveedores.ProveedoresView;
 import view.utils.Header;
 
 /**
  *
  * @author xavic
  */
-public class CompraProveedorView implements View {
+public class VentaSimpleView implements View {
     private VBox root, content;
     private Label name, labelNumFactura, labelProveedor, labelRuc, labelFecha, labelTotal, labelDetalle;
     private TextField inputNumFactura, inputProveedor, inputRuc, inputFecha, inputTotal, inputDetalle;
@@ -38,9 +39,9 @@ public class CompraProveedorView implements View {
     public Parent build() throws FileNotFoundException {
         root = new VBox();
         content = new VBox();
-        header = new Header("Compra Proveedor");
-        header.addBackEventListener(new ProveedoresView().build());
-        name = new Label("Compra a Proveedor");
+        header = new Header("Venta");
+        header.addBackEventListener(new VentasView().build());
+        name = new Label("Venta");
         body = new GridPane();
         saveBtn = new Button("Guardar");
         
@@ -59,8 +60,8 @@ public class CompraProveedorView implements View {
     
     private void createBody(){
         labelNumFactura = new Label("Num Factura");
-        labelProveedor = new Label("Proveedor");
-        labelRuc = new Label("RUC");
+        labelProveedor = new Label("Cliente");
+        labelRuc = new Label("Cedula");
         labelFecha = new Label("Fecha");
         labelTotal = new Label("Total");
         labelDetalle = new Label("Detalle Compra");
@@ -107,12 +108,12 @@ public class CompraProveedorView implements View {
             }else{
                 try {
                     String numFactura = inputNumFactura.getText();
-                    String proveedor = inputProveedor.getText();
-                    String ruc = inputRuc.getText();
+                    String nombreCliente = inputProveedor.getText();
+                    String cedula = inputRuc.getText();
                     Date fecha = null;
                     double total = Double.parseDouble(inputTotal.getText());
                     String detalle = inputDetalle.getText();
-                    CompraProveedor compra = new CompraProveedor(numFactura, proveedor, ruc, fecha, total, detalle);
+                    Venta venta = new Venta(numFactura, nombreCliente, cedula, fecha, total, detalle);
                     this.accept().showAndWait();
                     FerrelectricSBD.setScene(new ProveedoresView().build());
                 } catch (FileNotFoundException ex) {

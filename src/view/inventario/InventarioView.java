@@ -21,7 +21,7 @@ import view.utils.GridComponents;
  */
 public class InventarioView extends GridComponents{
     private VBox root;
-    private final String[] lbl_Filtros = {"Nombre","Marca","Precio Unitario","Cantidad"};
+    private final String[] lbl_Filtros = {"Nombre","Marca","Precio Unitario"};
     private final String[] lbl_Nombres = {"Nombre","Marca","Precio Unitario","Cantidad"};
     
     public InventarioView() throws FileNotFoundException{

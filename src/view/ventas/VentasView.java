@@ -5,12 +5,15 @@
  */
 package view.ventas;
 
-import Tablas.CargarFactura;
-import Tablas.FacturasCo;
+import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
+import models.Venta;
 import view.MainMenuView;
+import view.proveedores.ProveedoresView;
 import view.utils.GridComponents;
 
 /**
@@ -19,8 +22,8 @@ import view.utils.GridComponents;
  */
 public class VentasView extends GridComponents{
     private VBox root;
-    private String[] nombreCampos = {"No. Factura","Total","Cantidad","Cliente","Fecha","Descripcion","Direccion"};
-    private String[] nombreFiltros = {"Num. Factura","Cliente","Cédula","Fecha"};
+    private String[] nombreCampos = {"Num. Factura","Cliente","Cedula","Fecha","Total","Detalle Compra"};
+    private String[] nombreFiltros = {"Num. Factura","Proveedor","RUC","Fecha","Total"};
     
     public VentasView() throws FileNotFoundException{
         super("Ventas", new MainMenuView().build());
@@ -30,12 +33,23 @@ public class VentasView extends GridComponents{
     public Parent build() throws FileNotFoundException {
         root = (VBox) super.build(nombreCampos, nombreFiltros);
         
-        CargarFactura.leerArchivo();
-        for(FacturasCo fac: CargarFactura.getFacturas()){
-            addRow(fac);
+        for(Venta venta : dbController.getVentas()){
+            addRow(venta);
         }
         
+        addButtonAction();
+        
         return root;
+    }
+    
+    private void addButtonAction(){
+        addBtn.setOnMouseClicked(e ->{
+            try {
+                FerrelectricSBD.setScene(new VentaSimpleView().build());
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ProveedoresView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
 }

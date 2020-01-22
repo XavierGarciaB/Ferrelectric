@@ -43,6 +43,7 @@ create table Factura(
     costoTotal float not null,
     cedula varchar(10) not null,
     cedulaEmpleado varchar(10) not null,
+    fecha date not null,
     primary key(numFactura),
     foreign key (cedula) references Cliente(cedula),
     foreign key (cedulaEmpleado) references Empleado(cedula)
@@ -51,7 +52,6 @@ create table Factura(
 create table DescripcionVenta(
 	idVenta int not null auto_increment,
     cantidad int not null,
-    costo float not null,
     numFactura int not null,
     idItem int not null,
     primary key (idVenta),
@@ -70,7 +70,6 @@ create table Proveedor(
 create table CompraProveedor(
 	numFactura int not null,
     fecha date not null,
-    costoTotal float not null,
     cedulaEmpleado varchar(10) not null,
     idProveedor int not null,
     primary key (numFactura),
@@ -115,6 +114,7 @@ INSERT INTO `mydb`.`Empleado` (`Cedula`, `Nombre`, `Administrador`, `Pass`) VALU
 COMMIT;
 
 
+
 -- -----------------------------------------------------
 -- Data for table `mydb`.`Cliente`
 -- -----------------------------------------------------
@@ -131,9 +131,22 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`) VALUES (000000001, 1.50, '0951600897', '0991475627');
-INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`) VALUES (000000002, 8.25, '0951600897', '0991475627');
-INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`) VALUES (000000003, 10.00, '0924691127', '0951658897');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000001, 1.50, '0951600897', '0991475627', '2019/09/19');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000002, 8.25, '0951600897', '0991475627', '2019/09/07');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000003, 10.00, '0924691127', '0951658897', '2019/10/21');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `mydb`.`Cliente`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `mydb`;
+INSERT INTO `mydb`.`DescripcionVenta` (`Cantidad`, `numFactura`, `idItem`) VALUES (2, 000000001, 1);
+INSERT INTO `mydb`.`DescripcionVenta` (`Cantidad`, `numFactura`, `idItem`) VALUES (1, 000000002, 2);
+INSERT INTO `mydb`.`DescripcionVenta` (`Cantidad`, `numFactura`, `idItem`) VALUES (3, 000000002, 3);
+INSERT INTO `mydb`.`DescripcionVenta` (`Cantidad`, `numFactura`, `idItem`) VALUES (5, 000000003, 4);
 
 COMMIT;
 
@@ -155,9 +168,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `CostoTotal`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000001', '2019/09/07', 10.27, 1, '0951600897');
-INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `CostoTotal`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000002', '2019/09/06', 13.35, 3, '0951600897');
-INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `CostoTotal`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000003', '2019/09/08', 15.00, 2, '0924691127');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000001', '2019/09/07', 1, '0951600897');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000002', '2019/09/06', 3, '0951600897');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000003', '2019/09/08', 2, '0924691127');
 
 COMMIT;
 

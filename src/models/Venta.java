@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author xavic
  */
-public class CompraProveedor implements Listable {
+public class Venta implements Listable{
     private String numFactura;
     private String nombre;
     private String ruc;
@@ -21,7 +21,7 @@ public class CompraProveedor implements Listable {
     private double total;
     private String detalleCompra;
 
-    public CompraProveedor(String numFactura, String nombre, String ruc, Date fecha, double total, String detalleCompra) {
+    public Venta(String numFactura, String nombre, String ruc, Date fecha, double total, String detalleCompra) {
         this.numFactura = numFactura;
         this.nombre = nombre;
         this.ruc = ruc;
@@ -76,7 +76,7 @@ public class CompraProveedor implements Listable {
         values.add(numFactura);
         values.add(nombre);
         values.add(ruc);
-        values.add(fecha.toString());
+        values.add(fecha.toString()); 
         values.add(String.format("%.2f", total));
         values.add(detalleCompra);
         return values;

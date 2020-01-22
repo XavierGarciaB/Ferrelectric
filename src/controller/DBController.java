@@ -7,6 +7,7 @@ package controller;
 
 import MySQL.Connector;
 import MySQL.Queries;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +18,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.CompraProveedor;
+import models.Detalle;
 import models.Item;
+import models.Venta;
 
 /**
  *
@@ -90,5 +93,63 @@ public class DBController {
         
         return proveedores;
     }
+    
+    public List<Venta> getVentas(){
+        List<Venta> ventas = new ArrayList<>();
+        try {
+            PreparedStatement ps = conn.prepareStatement(Queries.getVentas);
+            ResultSet result = ps.executeQuery();
+            
+            while(result.next()){
+                String numFactura = String.valueOf(result.getInt("numfactura"));
+                String nombre = result.getString("nombre");
+                String cedula = result.getString("cedula");
+                Date fecha = result.getDate("fecha");
+                double total = result.getDouble("total");
+                String detalleVenta = String.valueOf(result.getInt("DetalleVenta"));
+                ventas.add(new Venta(numFactura, nombre, cedula, fecha, total, detalleVenta));                 
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return ventas;
+    }
+    
+    public static boolean insertItem(Item item){
+        try {
+            PreparedStatement ps = conn.prepareStatement(Queries.insertItem);
+            ps.setString(1, item.getNombre());
+            ps.setDouble(2, item.getPrecioUnidad());
+            ps.setString(3, item.getMarca());
+            ps.setInt(4, item.getCantidad());
+            ps.execute();
+            System.out.println("Objeto Guardado");
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+    
+    public static List<Detalle> getDetalles(String numFactura){
+        List<Detalle> detalles = new ArrayList<>();
+        try {
+            CallableStatement  cs = conn.prepareCall(Queries.storedDetallesVenta);
+            cs.setInt(1, Integer.valueOf(numFactura));
+            ResultSet result = cs.executeQuery();
+            while(result.next()){
+                String nombre = result.getString("nombre");
+                int cantidad = result.getInt("cantidad");
+                double costo = result.getDouble("costo");
+                Detalle detalle = new Detalle(nombre, cantidad, costo);
+                detalles.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return detalles;
+    } 
 
 }

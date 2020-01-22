@@ -13,8 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
 import models.CompraProveedor;
 import view.MainMenuView;
-import view.inventario.InventarioView;
-import view.inventario.ItemView;
 import view.utils.GridComponents;
 
 /**
