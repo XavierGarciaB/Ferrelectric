@@ -19,15 +19,20 @@ public class CompraProveedor implements Listable {
     private String ruc;
     private Date fecha;
     private double total;
-    private String detalleCompra;
+    private String cedulaEmpleado;
 
-    public CompraProveedor(String numFactura, String nombre, String ruc, Date fecha, double total, String detalleCompra) {
+    public CompraProveedor(String numFactura, String nombre, String ruc, Date fecha, String cedulaEmpleado) {
         this.numFactura = numFactura;
         this.nombre = nombre;
         this.ruc = ruc;
         this.fecha = fecha;
         this.total = total;
-        this.detalleCompra = detalleCompra;
+        this.cedulaEmpleado = cedulaEmpleado;
+    }
+    
+    public CompraProveedor(String numFactura, String nombre, String ruc, Date fecha, double total, String cedulaEmpleado) {
+        this(numFactura, nombre, ruc, fecha, cedulaEmpleado);
+        this.total = total;
     }
 
     public String getNumFactura() {
@@ -62,13 +67,13 @@ public class CompraProveedor implements Listable {
         this.fecha = fecha;
     }
 
-    public String getDetalleCompra() {
-        return detalleCompra;
+    public String getCedulaEmpleado() {
+        return cedulaEmpleado;
     }
 
-    public void setDetalleCompra(String detalleCompra) {
-        this.detalleCompra = detalleCompra;
-    }    
+    public void setCedulaEmpleado(String cedulaEmpleado) {
+        this.cedulaEmpleado = cedulaEmpleado;
+    }
 
     @Override
     public List<String> getValues() {
@@ -78,7 +83,6 @@ public class CompraProveedor implements Listable {
         values.add(ruc);
         values.add(fecha.toString());
         values.add(String.format("%.2f", total));
-        values.add(detalleCompra);
         return values;
     }
     

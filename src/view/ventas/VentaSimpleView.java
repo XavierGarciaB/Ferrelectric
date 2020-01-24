@@ -5,22 +5,26 @@
  */
 package view.ventas;
 
+import controller.Alertas;
+import controller.DBController;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
-import java.util.Date;
+import java.time.LocalDate;
+import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import models.Venta;
+import res.PATHS;
 import view.View;
 import view.inventario.ItemView;
-import view.proveedores.ProveedoresView;
 import view.utils.Header;
 
 /**
@@ -29,11 +33,13 @@ import view.utils.Header;
  */
 public class VentaSimpleView implements View {
     private VBox root, content;
-    private Label name, labelNumFactura, labelProveedor, labelRuc, labelFecha, labelTotal, labelDetalle;
-    private TextField inputNumFactura, inputProveedor, inputRuc, inputFecha, inputTotal, inputDetalle;
+    private Label name, labelNumFactura, lableCliente, labelCedula, labelFecha;
+    private TextField inputNumFactura, inputCliente, inputCedula, inputFecha;
     private GridPane body;
-    private Button saveBtn;
+    private Button saveBtn, agregarDetalles;
     private Header header;
+    private Venta venta;
+    private AgregarDetalleView adv;
 
     @Override
     public Parent build() throws FileNotFoundException {
@@ -43,79 +49,67 @@ public class VentaSimpleView implements View {
         header.addBackEventListener(new VentasView().build());
         name = new Label("Venta");
         body = new GridPane();
+        agregarDetalles = new Button("Añadir detalles");
         saveBtn = new Button("Guardar");
         
         content.getStyleClass().add("cont_view");
         name.getStyleClass().add("logIn_lbl");
         body.getStyleClass().add("grid_view");
         saveBtn.getStyleClass().add("save_btn");
+        agregarDetalles.getStyleClass().add("save_btn");
         
         createBody();
         saveButtonAction();
+        addDetalleButtonAction();
         
-        content.getChildren().addAll(name, body, saveBtn);
+        content.getChildren().addAll(name, body, agregarDetalles, saveBtn);
         root.getChildren().addAll(header.render(), content);
         return root;
     }
     
     private void createBody(){
         labelNumFactura = new Label("Num Factura");
-        labelProveedor = new Label("Cliente");
-        labelRuc = new Label("Cedula");
+        lableCliente = new Label("Cliente");
+        labelCedula = new Label("Cedula");
         labelFecha = new Label("Fecha");
-        labelTotal = new Label("Total");
-        labelDetalle = new Label("Detalle Compra");
         inputNumFactura = new TextField();
-        inputProveedor = new TextField();
-        inputRuc = new TextField();
+        inputCliente = new TextField();
+        inputCedula = new TextField();
         inputFecha = new TextField();
-        inputTotal = new TextField();
-        inputDetalle = new TextField();
         
         //ES POSIBLE QUE HAYA UNA FORMA MÁS EFICIENTE DE ASIGNAR ESTO
         //POR AHORA SE QUEDA ASÍ
         labelNumFactura.getStyleClass().add("grid_lbl_save");
-        labelProveedor.getStyleClass().add("grid_lbl_save");
-        labelRuc.getStyleClass().add("grid_lbl_save");
+        lableCliente.getStyleClass().add("grid_lbl_save");
+        labelCedula.getStyleClass().add("grid_lbl_save");
         labelFecha.getStyleClass().add("grid_lbl_save");
-        labelTotal.getStyleClass().add("grid_lbl_save");
-        labelDetalle.getStyleClass().add("grid_lbl_save");
         inputNumFactura.getStyleClass().add("grid_input");
-        inputProveedor.getStyleClass().add("grid_input");
-        inputRuc.getStyleClass().add("grid_input");
+        inputCliente.getStyleClass().add("grid_input");
+        inputCedula.getStyleClass().add("grid_input");
         inputFecha.getStyleClass().add("grid_input");
-        inputTotal.getStyleClass().add("grid_input");
-        inputDetalle.getStyleClass().add("grid_input");
 
         body.add(labelNumFactura, 0, 0);
         body.add(inputNumFactura, 1, 0);
-        body.add(labelProveedor, 0, 1);
-        body.add(inputProveedor, 1, 1);
-        body.add(labelRuc, 0, 3);
-        body.add(inputRuc, 1, 3);
+        body.add(lableCliente, 0, 1);
+        body.add(inputCliente, 1, 1);
+        body.add(labelCedula, 0, 3);
+        body.add(inputCedula, 1, 3);
         body.add(labelFecha, 0, 4);
         body.add(inputFecha, 1, 4);
-        body.add(labelTotal, 0, 5);
-        body.add(inputTotal, 1, 5);
-        body.add(labelDetalle, 0, 6);
-        body.add(inputDetalle, 1, 6);
     }
     
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
-            if(inputNumFactura.getText().equals("") || inputProveedor.getText().equals("") || inputRuc.getText().equals("")){
-                this.cancel().showAndWait();
+            if(inputNumFactura.getText().equals("") || inputCliente.getText().equals("") || inputCedula.getText().equals("")){
+                Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
             }else{
                 try {
-                    String numFactura = inputNumFactura.getText();
-                    String nombreCliente = inputProveedor.getText();
-                    String cedula = inputRuc.getText();
-                    Date fecha = null;
-                    double total = Double.parseDouble(inputTotal.getText());
-                    String detalle = inputDetalle.getText();
-                    Venta venta = new Venta(numFactura, nombreCliente, cedula, fecha, total, detalle);
-                    this.accept().showAndWait();
-                    FerrelectricSBD.setScene(new ProveedoresView().build());
+                    existeCliente();   
+                    venta = createVenta();                    
+                    // EMPEZAR A TRABAJAR CON MYSQL DESDE AQUI
+                    DBController.guardarFactura(adv.devolverListaDetalles(), venta);
+                    Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
+                    FerrelectricSBD.setScene(new VentasView().build());
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(ItemView.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -123,19 +117,43 @@ public class VentaSimpleView implements View {
         });
     }
     
-    private Alert cancel(){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("ERROR");
-        alert.setHeaderText("Error de datos");
-        alert.setContentText("Los datos ingresados no son correctos");
-        return alert;
+    private void addDetalleButtonAction(){
+        agregarDetalles.setOnAction(e -> {
+            try {
+                if(inputNumFactura.getText().equals("") || inputCliente.getText().equals("") || inputCedula.getText().equals("")){
+                    Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
+                }else{
+                    existeCliente();
+                    venta = createVenta(); 
+                    Stage stage = new Stage();
+                    adv = new AgregarDetalleView(stage); 
+                    Scene scene = new Scene(adv.build(), 1200, 400);
+                    scene.getStylesheets().add(PATHS.STYLESHEET_PATH);
+                    stage.setScene(scene);
+                    stage.setTitle("Agregar detalles");
+                    stage.showAndWait();
+                }
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(VentaSimpleView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
     
-    private Alert accept(){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("SAVE");
-        alert.setHeaderText("Datos guardados");
-        alert.setContentText("Los datos ingresados se han guardado en la base de datos");
-        return alert;
+    private void existeCliente() throws FileNotFoundException{
+        boolean existeCliente = DBController.verificarCliente(inputCliente.getText(), inputCedula.getText());
+        if(!existeCliente){           
+            FerrelectricSBD.setScene(new NuevoClienteView().build());
+        }
+    }
+    
+    private Venta createVenta(){
+        String numFactura = inputNumFactura.getText();
+        String nombreCliente = inputCliente.getText();
+        String cedula = inputCedula.getText();
+        LocalDate fecha = LocalDate.parse(inputFecha.getText());
+        String cedulaEmpleado = DBController.empleado.getCedula();
+
+        return(new Venta(numFactura, nombreCliente, cedula, Date.valueOf(fecha), cedulaEmpleado));
     }
 }

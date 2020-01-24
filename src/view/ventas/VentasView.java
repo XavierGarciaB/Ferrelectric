@@ -22,7 +22,7 @@ import view.utils.GridComponents;
  */
 public class VentasView extends GridComponents{
     private VBox root;
-    private String[] nombreCampos = {"Num. Factura","Cliente","Cedula","Fecha","Total","Detalle Compra"};
+    private String[] nombreCampos = {"Num. Factura","Cliente","Cedula","Fecha","Total"};
     private String[] nombreFiltros = {"Num. Factura","Proveedor","RUC","Fecha","Total"};
     
     public VentasView() throws FileNotFoundException{

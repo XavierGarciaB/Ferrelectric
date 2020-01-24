@@ -16,18 +16,22 @@ import java.util.List;
 public class Venta implements Listable{
     private String numFactura;
     private String nombre;
-    private String ruc;
+    private String cedula;
     private Date fecha;
     private double total;
-    private String detalleCompra;
+    private String cedulaEmpleado;
 
-    public Venta(String numFactura, String nombre, String ruc, Date fecha, double total, String detalleCompra) {
+    public Venta(String numFactura, String nombre, String cedula, Date fecha, double total, String cedulaEmpleado) {
+        this(numFactura, nombre, cedula, fecha, cedulaEmpleado);
+        this.total = total;
+    }
+    
+    public Venta(String numFactura, String nombre, String cedula, Date fecha, String cedulaEmpleado) {
         this.numFactura = numFactura;
         this.nombre = nombre;
-        this.ruc = ruc;
+        this.cedula = cedula;
         this.fecha = fecha;
-        this.total = total;
-        this.detalleCompra = detalleCompra;
+        this.cedulaEmpleado = cedulaEmpleado;
     }
 
     public String getNumFactura() {
@@ -46,12 +50,12 @@ public class Venta implements Listable{
         this.nombre = nombre;
     }
 
-    public String getRuc() {
-        return ruc;
+    public String getCedula() {
+        return cedula;
     }
 
-    public void setRuc(String ruc) {
-        this.ruc = ruc;
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
     }
 
     public Date getFecha() {
@@ -62,23 +66,30 @@ public class Venta implements Listable{
         this.fecha = fecha;
     }
 
-    public String getDetalleCompra() {
-        return detalleCompra;
+    public double getTotal() {
+        return total;
     }
 
-    public void setDetalleCompra(String detalleCompra) {
-        this.detalleCompra = detalleCompra;
-    }    
+    public void setTotal(double total) {
+        this.total = total;
+    }
 
+    public String getCedulaEmpleado() {
+        return cedulaEmpleado;
+    }
+
+    public void setCedulaEmpleado(String cedulaEmpleado) {
+        this.cedulaEmpleado = cedulaEmpleado;
+    }
+    
     @Override
     public List<String> getValues() {
         List<String> values = new ArrayList<>();
         values.add(numFactura);
         values.add(nombre);
-        values.add(ruc);
+        values.add(cedula);
         values.add(fecha.toString()); 
         values.add(String.format("%.2f", total));
-        values.add(detalleCompra);
         return values;
     }
     

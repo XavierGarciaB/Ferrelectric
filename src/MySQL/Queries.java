@@ -18,8 +18,8 @@ public class Queries {
                                                     "														from detallecompra dc, item i, compraproveedor cp\n" +
                                                     "														where i.idItem=dc.idItem and cp.numFactura=dc.numFactura\n" +
                                                     "														group by cp.numFactura) as total\n" +
-                                                    "where cp.numFactura=dc.numFactura and cp.idProveedor=p.idProveedor and total.numFactura=cp.numFactura\n" +
-                                                    "group by cp.numFactura;";
+                                                    "where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura\n" +
+                                                    "group by cp.numFactura";
     
     
     public static final String getVentas = "select f.numFactura as numFactura, c.nombre as nombre, c.cedula as cedula, f.fecha as fecha, total.total as total, dv.idVenta as DetalleVenta\n" +
@@ -33,7 +33,30 @@ public class Queries {
     
     public static final String insertItem = "INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES (?, ?, ?, ?);";
     
+    public static final String insertFactura = "INSERT INTO `mydb`.`Factura` (`numFactura`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (?, ?, ?, ?)";
+    
+    public static final String insertCliente = "INSERT INTO `mydb`.`Cliente` (`Cedula`, `Nombre`, `Direccion`, `Telefono`) VALUES (?, ?, ?, ?)";
+    
+    public static final String insertDetalle = "INSERT INTO `mydb`.`DescripcionVenta` (`Cantidad`, `numFactura`, `idItem`) VALUES (?, ?, ?)";
+    
+    public static final String insertDescripcionCompra = "INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `idItem`, `numFactura`) VALUES (?, ?, ?)";
+    
+    public static final String insertProveedor = "INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES (?, ?, ?)";
+    
+    public static final String insertCompraProveedor = "INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `ruc`, `cedulaEmpleado`) VALUES (?, ?, ?, ?)";
+    
     public static final String storedDetallesVenta = "{call obtenerDetalleVentaNumFactura(?)}";
     
     public static final String storedDetallesCompra = "{call obtenerDetalleCompraNumFactura(?)}";
+    
+    public static final String storedobtenerItem = "{call obtenerIdItem(?, ?)}";
+    
+    public static final String storedVerificarCliente = "{call verificarCliente(?, ?, ?)}";
+    
+    public static final String storedRestarItems = "{call restarCantidadItems(?, ?)}";
+    
+    public static final String storedSumarItems = "{call sumarCantidadItems(?, ?)}";
+    
+    public static final String storedVerificarProveedor = "{call verificarProveedor(?, ?, ?)}";
+
 }

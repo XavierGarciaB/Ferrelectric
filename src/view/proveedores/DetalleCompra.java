@@ -19,7 +19,6 @@ import models.Detalle;
 import models.Venta;
 import view.View;
 import view.utils.Header;
-import view.ventas.VentasView;
 
 /**
  *

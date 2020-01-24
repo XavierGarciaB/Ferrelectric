@@ -5,13 +5,10 @@
  */
 package view.inventario;
 
+import controller.Alertas;
 import controller.DBController;
-import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -90,37 +87,17 @@ public class ItemView implements View {
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
             if(inputName.getText().equals("") || inputMarca.getText().equals("") || inputPU.getText().equals("")){
-                this.cancel().showAndWait();
+                Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
             }else{
-                try {
-                    String nombre = inputName.getText();
-                    String marca = inputMarca.getText();
-                    double precioUnitario = Double.parseDouble(inputPU.getText());
-                    int cantidad = Integer.parseInt(inputCantidad.getText());
-                    Item item = new Item(nombre, marca, precioUnitario, cantidad);
-                    DBController.insertItem(item);
-                    this.accept().showAndWait();
-                    FerrelectricSBD.setScene(new InventarioView().build());
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(ItemView.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                String nombre = inputName.getText();
+                String marca = inputMarca.getText();
+                double precioUnitario = Double.parseDouble(inputPU.getText());
+                int cantidad = Integer.parseInt(inputCantidad.getText());
+                Item item = new Item(nombre, marca, precioUnitario, cantidad);
+                DBController.insertItem(item);
+                Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
             }
         });
     }
-    
-    private Alert cancel(){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("ERROR");
-        alert.setHeaderText("Error de datos");
-        alert.setContentText("Los datos ingresados no son correctos");
-        return alert;
-    }
-    
-    private Alert accept(){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("SAVE");
-        alert.setHeaderText("Datos guardados");
-        alert.setContentText("Los datos ingresados se han guardado en la base de datos");
-        return alert;
-    }
+
 }

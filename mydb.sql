@@ -40,7 +40,6 @@ create table Cliente(
 
 create table Factura(
 	numFactura int not null,
-    costoTotal float not null,
     cedula varchar(10) not null,
     cedulaEmpleado varchar(10) not null,
     fecha date not null,
@@ -60,21 +59,20 @@ create table DescripcionVenta(
 );
 
 create table Proveedor(
-	idProveedor int not null auto_increment,
     nombre varchar(45) not null,
     ruc varchar(15) not null,
     telefono varchar(10) not null default '000000',
-    primary key (idProveedor)
+    primary key (ruc)
 );
 
 create table CompraProveedor(
 	numFactura int not null,
     fecha date not null,
     cedulaEmpleado varchar(10) not null,
-    idProveedor int not null,
+    ruc varchar(15) not null,
     primary key (numFactura),
     foreign key (cedulaEmpleado) references Empleado(cedula),
-    foreign key (idProveedor) references Proveedor(idProveedor)
+    foreign key (ruc) references Proveedor(ruc)
 );
 
 create table DetalleCompra(
@@ -114,7 +112,6 @@ INSERT INTO `mydb`.`Empleado` (`Cedula`, `Nombre`, `Administrador`, `Pass`) VALU
 COMMIT;
 
 
-
 -- -----------------------------------------------------
 -- Data for table `mydb`.`Cliente`
 -- -----------------------------------------------------
@@ -131,9 +128,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000001, 1.50, '0951600897', '0991475627', '2019/09/19');
-INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000002, 8.25, '0951600897', '0991475627', '2019/09/07');
-INSERT INTO `mydb`.`Factura` (`numFactura`, `costoTotal`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000003, 10.00, '0924691127', '0951658897', '2019/10/21');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000001, '0951600897', '0991475627', '2019/09/19');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000002, '0951600897', '0991475627', '2019/09/07');
+INSERT INTO `mydb`.`Factura` (`numFactura`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (000000003, '0924691127', '0951658897', '2019/10/21');
 
 COMMIT;
 
@@ -156,9 +153,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES ('Mafelesa', DEFAULT, '0000000000000');
-INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES ('Tolsen', DEFAULT, '0000000000000');
-INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES ('Promafer', DEFAULT, '0000000000000');
+INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES ('Mafelesa', DEFAULT, '0000000000001');
+INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES ('Tolsen', DEFAULT, '0000000000002');
+INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES ('Promafer', DEFAULT, '0000000000003');
 
 COMMIT;
 
@@ -168,12 +165,11 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `mydb`;
-INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000001', '2019/09/07', 1, '0951600897');
-INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000002', '2019/09/06', 3, '0951600897');
-INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `idProveedor`, `cedulaEmpleado`) VALUES ('000000003', '2019/09/08', 2, '0924691127');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `ruc`, `cedulaEmpleado`) VALUES ('000000001', '2019/09/07', '0000000000001', '0951600897');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `ruc`, `cedulaEmpleado`) VALUES ('000000002', '2019/09/06', '0000000000003', '0951600897');
+INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `ruc`, `cedulaEmpleado`) VALUES ('000000003', '2019/09/08', '0000000000002', '0924691127');
 
 COMMIT;
-
 
 -- -----------------------------------------------------
 -- Data for table `mydb`.`Detalle_Compra`

@@ -5,22 +5,30 @@
  */
 package view.proveedores;
 
+import controller.Alertas;
+import controller.DBController;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import models.CompraProveedor;
+import res.PATHS;
 import view.View;
 import view.inventario.ItemView;
 import view.utils.Header;
+import view.ventas.AgregarDetalleView;
+import view.ventas.VentaSimpleView;
 
 /**
  *
@@ -28,11 +36,13 @@ import view.utils.Header;
  */
 public class CompraProveedorView implements View {
     private VBox root, content;
-    private Label name, labelNumFactura, labelProveedor, labelRuc, labelFecha, labelTotal, labelDetalle;
-    private TextField inputNumFactura, inputProveedor, inputRuc, inputFecha, inputTotal, inputDetalle;
+    private Label name, labelNumFactura, labelProveedor, labelRuc, labelFecha;
+    private TextField inputNumFactura, inputProveedor, inputRuc, inputFecha;
     private GridPane body;
-    private Button saveBtn;
+    private Button saveBtn, agregarDetalles;
     private Header header;
+    private CompraProveedor compra;
+    private AgregarDescripcionView adc;
 
     @Override
     public Parent build() throws FileNotFoundException {
@@ -42,17 +52,20 @@ public class CompraProveedorView implements View {
         header.addBackEventListener(new ProveedoresView().build());
         name = new Label("Compra a Proveedor");
         body = new GridPane();
+        agregarDetalles = new Button("Añadir detalles");
         saveBtn = new Button("Guardar");
         
         content.getStyleClass().add("cont_view");
         name.getStyleClass().add("logIn_lbl");
         body.getStyleClass().add("grid_view");
         saveBtn.getStyleClass().add("save_btn");
+        agregarDetalles.getStyleClass().add("save_btn");
         
         createBody();
         saveButtonAction();
+        addDetalleButtonAction();
         
-        content.getChildren().addAll(name, body, saveBtn);
+        content.getChildren().addAll(name, body, agregarDetalles, saveBtn);
         root.getChildren().addAll(header.render(), content);
         return root;
     }
@@ -62,14 +75,10 @@ public class CompraProveedorView implements View {
         labelProveedor = new Label("Proveedor");
         labelRuc = new Label("RUC");
         labelFecha = new Label("Fecha");
-        labelTotal = new Label("Total");
-        labelDetalle = new Label("Detalle Compra");
         inputNumFactura = new TextField();
         inputProveedor = new TextField();
         inputRuc = new TextField();
         inputFecha = new TextField();
-        inputTotal = new TextField();
-        inputDetalle = new TextField();
         
         //ES POSIBLE QUE HAYA UNA FORMA MÁS EFICIENTE DE ASIGNAR ESTO
         //POR AHORA SE QUEDA ASÍ
@@ -77,14 +86,10 @@ public class CompraProveedorView implements View {
         labelProveedor.getStyleClass().add("grid_lbl_save");
         labelRuc.getStyleClass().add("grid_lbl_save");
         labelFecha.getStyleClass().add("grid_lbl_save");
-        labelTotal.getStyleClass().add("grid_lbl_save");
-        labelDetalle.getStyleClass().add("grid_lbl_save");
         inputNumFactura.getStyleClass().add("grid_input");
         inputProveedor.getStyleClass().add("grid_input");
         inputRuc.getStyleClass().add("grid_input");
         inputFecha.getStyleClass().add("grid_input");
-        inputTotal.getStyleClass().add("grid_input");
-        inputDetalle.getStyleClass().add("grid_input");
 
         body.add(labelNumFactura, 0, 0);
         body.add(inputNumFactura, 1, 0);
@@ -94,26 +99,18 @@ public class CompraProveedorView implements View {
         body.add(inputRuc, 1, 3);
         body.add(labelFecha, 0, 4);
         body.add(inputFecha, 1, 4);
-        body.add(labelTotal, 0, 5);
-        body.add(inputTotal, 1, 5);
-        body.add(labelDetalle, 0, 6);
-        body.add(inputDetalle, 1, 6);
     }
     
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
             if(inputNumFactura.getText().equals("") || inputProveedor.getText().equals("") || inputRuc.getText().equals("")){
-                this.cancel().showAndWait();
+                Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
             }else{
                 try {
-                    String numFactura = inputNumFactura.getText();
-                    String proveedor = inputProveedor.getText();
-                    String ruc = inputRuc.getText();
-                    Date fecha = null;
-                    double total = Double.parseDouble(inputTotal.getText());
-                    String detalle = inputDetalle.getText();
-                    CompraProveedor compra = new CompraProveedor(numFactura, proveedor, ruc, fecha, total, detalle);
-                    this.accept().showAndWait();
+                    existeProveedor();
+                    compra = createCompra();
+                    DBController.guardarCompraProveedor(adc.devolverListaDetalles(), compra);
+                    Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
                     FerrelectricSBD.setScene(new ProveedoresView().build());
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(ItemView.class.getName()).log(Level.SEVERE, null, ex);
@@ -122,19 +119,44 @@ public class CompraProveedorView implements View {
         });
     }
     
-    private Alert cancel(){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("ERROR");
-        alert.setHeaderText("Error de datos");
-        alert.setContentText("Los datos ingresados no son correctos");
-        return alert;
+    private void addDetalleButtonAction(){
+        agregarDetalles.setOnAction(e -> {
+            try {
+                if(inputNumFactura.getText().equals("") || inputProveedor.getText().equals("") || inputRuc.getText().equals("")){
+                    Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
+                }else{
+                    existeProveedor();
+                    compra = createCompra(); 
+                    Stage stage = new Stage();
+                    adc = new AgregarDescripcionView(stage); 
+                    Scene scene = new Scene(adc.build(), 1200, 400);
+                    scene.getStylesheets().add(PATHS.STYLESHEET_PATH);
+                    stage.setScene(scene);
+                    stage.setTitle("Agregar detalles");
+                    stage.showAndWait();
+                }
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(VentaSimpleView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
     
-    private Alert accept(){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("SAVE");
-        alert.setHeaderText("Datos guardados");
-        alert.setContentText("Los datos ingresados se han guardado en la base de datos");
-        return alert;
+    private CompraProveedor createCompra(){
+        String numFactura = inputNumFactura.getText();
+        String proveedor = inputProveedor.getText();
+        String ruc = inputRuc.getText();
+        LocalDate fecha = LocalDate.parse(inputFecha.getText());
+        String cedulaEmpleado = DBController.empleado.getCedula();
+        
+        return (new CompraProveedor(numFactura, proveedor, ruc, java.sql.Date.valueOf(fecha), cedulaEmpleado));
     }
+    
+    private void existeProveedor() throws FileNotFoundException{
+        boolean existeProveedor = DBController.verificarProveedor(inputProveedor.getText(), inputRuc.getText());
+        if(!existeProveedor){           
+            FerrelectricSBD.setScene(new NuevoProveedorView().build());
+        }
+    }
+    
 }
