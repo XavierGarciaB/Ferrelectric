@@ -33,7 +33,7 @@ create table Empleado(
 create table Cliente(
 	cedula varchar(10) not null,
     nombre varchar(45) not null default "Consumidor Final",
-    direccion varchar(45) not null default 'Su casa',				#Se podria poner algun default?
+    direccion varchar(45) not null default 'Su casa',				
     telefono varchar(15) not null default '000000',
     primary key (cedula)
 );
@@ -98,7 +98,49 @@ INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY
 INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY EVANS AZUL ESPANOL 219', 1.75, 'Evans',30);
 INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('LLAVE STANLEY CORONA 10 - 11', 1.34, 'Stanley',50);
 INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CANALETA 39X19', 1.84, 'Desconocido',29);
-
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('UNION 3/8 CON ABRAZADERA 7/8', 0.45, 'Desconocido',20);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('TORNILLOS 3/16 CON ANILLOS PLANOS', 0.66, 'Desconocido',50);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CANDADO BARRIL', 2.70, 'Baoli',60);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BROCHA M/NATURAL 3/4', 0.26, 'Soyoda',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY EVANS ROJO OXIDO ANTICORROSIVO', 1.75, 'Evans',40);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('FLEXOMETRO WOOD AZUL 5MTS', 1.96, 'Wood',15);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CABLE BATERIA N4 AWG C/M', 2.83, 'Incable',25);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BROCAS RHINO 3/16 PARA METAL', 1.10, 'Rhino',2);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY ADHEPLAST BLANCO MATE 1007', 1.025, 'Adheplast',10);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('LLAVE FIRENZI 3419 MEZON ACRILICA', 6.30, 'Firenzi',40);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PERNO ALLEN NEGRO 8 X 40MM', 1.30, 'Allen',50);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PERNO ALLEN NEGRO 8 X 25MM', 1.01, 'Allen',30);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('ADAPTADOR BOQ ENCHUFE COOPER 738', 1.05, 'Cooper',15);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('DESARMADOR DE COPA 5/16', 0.70, 'Desconocido',20);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CAUTIN 45 GRADOS GENUINE 110V/200W', 4.05, 'Genuine',30);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY NEGRO BRILLANTE OHIO 01', 1.19, 'Ohio',24);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY NEGRO BRILLANTE OHIO 21', 1.19, 'Ohio',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CABCPM FLEXIBLE N12 NEGRO R100M INCAB', 32.05, 'Incab',2);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BOQUILLA BENJAMIN CON CADENA', 0.55, 'Desconocido',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('COMBO C/MANGO 2LBS', 4.017, 'Pretul',20);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BOQUILLA NEGRA COLGANTE', 1.20, 'Desconocido',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('SPRAY ALUMINIO 25 OHIO', 1.19, 'Ohio',24);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('GANCHO DOBLE 30MM ORO/TORN', 0.71, 'Desconocido',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('TALADRO PERCUTOR FROTIA', 38.48, 'Frotia',4);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('ANILLO DE PRESION 3/8', 0.15, 'Desconocido',15);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PERNO 12MM X 100 X 1.75 ON ANILLOS PLANOS', 1.19, 'Desconocido',15);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('EXTENSION P/INTERP 3S 25FT', 4.03, 'InterP',5);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PERNO ALLEN CILINDRICO 8X30MM', 1.19, 'Allen',20);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BROCA ALLEN 1/4 PARA METAL', 1.25, 'Allen',4);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BROCA ALLEN 3/16 PARA METAL', 1.25, 'Allen',4);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BROCA ALLEN 1/8 PARA METAL', 1.25, 'Allen',4);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('ALDABA INDURA DORADA PORTACANDADO 3 1/2"', 1.50, 'Indura',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('ALDABA INDURA DORADA PORTACANDADO 4"', 1.55, 'Indura',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('LLAVE FV PARA DUCHA', 2.25, 'Capri',16);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('BROCA 1/8 IRWIN PARA METAL', 1.40, 'Irwin',30);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PERNO ALLEN 5X40MM', 1.00, 'Allen',100);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PINTURA UNICOLATEX MANDARINA EN GI', 2.55, 'Unicolatex',6);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PINTURA SPRAY ADHEPLAST VIOLETA OS 6024', 1.025, 'Adheplast',3);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('DADO TOLSEN HEXAGONAL MANDO 1/2 12MM', 0.85, 'Tolsen',3);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('PERNOS A/I 5/16 CON TUERCAS', 0.42, 'Desconocido',24);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('LLAVE COMBINADA MIXTA 13', 0.32, 'Desconocido',12);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('CINTA TEFLON PAOLO 3/4 X 15 MTS', 1.18, 'Paolo',10);
+INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES ('FOCO VELA E-14 TRANSPARENTE', 0.26, 'Desconocido',25);
 COMMIT;
 
 -- -----------------------------------------------------
