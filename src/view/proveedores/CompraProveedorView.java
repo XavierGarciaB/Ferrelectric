@@ -10,12 +10,10 @@ import controller.DBController;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -27,7 +25,6 @@ import res.PATHS;
 import view.View;
 import view.inventario.ItemView;
 import view.utils.Header;
-import view.ventas.AgregarDetalleView;
 import view.ventas.VentaSimpleView;
 
 /**
@@ -49,7 +46,7 @@ public class CompraProveedorView implements View {
         root = new VBox();
         content = new VBox();
         header = new Header("Compra Proveedor");
-        header.addBackEventListener(new ProveedoresView().build());
+        header.addBackEventListener(new ProveedoresView());
         name = new Label("Compra a Proveedor");
         body = new GridPane();
         agregarDetalles = new Button("Añadir detalles");
@@ -103,18 +100,18 @@ public class CompraProveedorView implements View {
     
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
-            if(inputNumFactura.getText().equals("") || inputProveedor.getText().equals("") || inputRuc.getText().equals("")){
+            boolean existeProveedor = DBController.verificarProveedor(inputProveedor.getText(), inputRuc.getText());
+            if(!existeProveedor){
                 Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
-            }else{
                 try {
-                    existeProveedor();
-                    compra = createCompra();
-                    DBController.guardarCompraProveedor(adc.devolverListaDetalles(), compra);
-                    Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
-                    FerrelectricSBD.setScene(new ProveedoresView().build());
+                    abrirNuevoProveedorView();
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(ItemView.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CompraProveedorView.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }else{
+                compra = createCompra();
+                DBController.guardarCompraProveedor(adc.devolverListaDetalles(), compra);
+                Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
             }
         });
     }
@@ -122,11 +119,12 @@ public class CompraProveedorView implements View {
     private void addDetalleButtonAction(){
         agregarDetalles.setOnAction(e -> {
             try {
-                if(inputNumFactura.getText().equals("") || inputProveedor.getText().equals("") || inputRuc.getText().equals("")){
+                boolean existeProveedor = DBController.verificarProveedor(inputProveedor.getText(), inputRuc.getText());
+                if(!existeProveedor){
                     Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
+                    abrirNuevoProveedorView();   
                 }else{
-                    existeProveedor();
-                    compra = createCompra(); 
+                    //existeProveedor();
                     Stage stage = new Stage();
                     adc = new AgregarDescripcionView(stage); 
                     Scene scene = new Scene(adc.build(), 1200, 400);
@@ -152,11 +150,13 @@ public class CompraProveedorView implements View {
         return (new CompraProveedor(numFactura, proveedor, ruc, java.sql.Date.valueOf(fecha), cedulaEmpleado));
     }
     
-    private void existeProveedor() throws FileNotFoundException{
-        boolean existeProveedor = DBController.verificarProveedor(inputProveedor.getText(), inputRuc.getText());
-        if(!existeProveedor){           
-            FerrelectricSBD.setScene(new NuevoProveedorView().build());
-        }
+    private void abrirNuevoProveedorView() throws FileNotFoundException{
+        Stage stage = new Stage();
+        NuevoProveedorView ncv = new NuevoProveedorView(stage); 
+        Scene scene = new Scene(ncv.build(), 1100, 600);
+        scene.getStylesheets().add(PATHS.STYLESHEET_PATH);
+        stage.setScene(scene);
+        stage.setTitle("Nuevo Proveedor");
+        stage.showAndWait();
     }
-    
 }

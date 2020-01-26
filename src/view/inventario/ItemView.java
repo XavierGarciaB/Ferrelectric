@@ -8,8 +8,11 @@ package view.inventario;
 import controller.Alertas;
 import controller.DBController;
 import java.io.FileNotFoundException;
+import java.util.Optional;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -27,28 +30,40 @@ public class ItemView implements View {
     private Label name, labelName, labelMarca, labelPU, labelCantidad;
     private TextField inputName, inputMarca, inputPU, inputCantidad;
     private GridPane body;
-    private Button saveBtn;
+    private Button saveBtn, deleteBtn;
     private Header header;
+    private Item item;
+    
+    public ItemView(){
+        // CONSTRUCTOR POR DEFECTO
+    }
+    
+    public ItemView(Item item){
+        this.item = item;
+    }
 
     @Override
     public Parent build() throws FileNotFoundException {
         root = new VBox();
         content = new VBox();
         header = new Header("Item");
-        header.addBackEventListener(new InventarioView().build());
+        header.addBackEventListener(new InventarioView());
         name = new Label("ITEM");
         body = new GridPane();
         saveBtn = new Button("Guardar");
+        deleteBtn = new Button("Eliminar");
         
         content.getStyleClass().add("cont_view");
         name.getStyleClass().add("logIn_lbl");
         body.getStyleClass().add("grid_view");
         saveBtn.getStyleClass().add("save_btn");
+        deleteBtn.getStyleClass().add("save_btn");
         
         createBody();
         saveButtonAction();
+        deleteButtonAction();
         
-        content.getChildren().addAll(name, body, saveBtn);
+        content.getChildren().addAll(name, body, saveBtn, deleteBtn);
         root.getChildren().addAll(header.render(), content);
         return root;
     }
@@ -62,6 +77,8 @@ public class ItemView implements View {
         inputMarca = new TextField();
         inputPU = new TextField();
         inputCantidad = new TextField();
+        
+        setInputText();
         
         //ES POSIBLE QUE HAYA UNA FORMA MÁS EFICIENTE DE ASIGNAR ESTO
         //POR AHORA SE QUEDA ASÍ
@@ -84,6 +101,22 @@ public class ItemView implements View {
         body.add(inputCantidad, 1, 4);
     }
     
+    private void setInputText(){
+        if(item != null){
+            inputName.setText(item.getNombre());
+            inputMarca.setText(item.getMarca());
+            inputPU.setText(String.valueOf(item.getPrecioUnidad()));
+            inputCantidad.setText(String.valueOf(item.getCantidad()));
+        }
+    }
+    
+    private void cleanInputText(){
+        inputName.setText("");
+            inputMarca.setText("");
+            inputPU.setText("");
+            inputCantidad.setText("");
+    }
+    
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
             if(inputName.getText().equals("") || inputMarca.getText().equals("") || inputPU.getText().equals("")){
@@ -94,10 +127,26 @@ public class ItemView implements View {
                 double precioUnitario = Double.parseDouble(inputPU.getText());
                 int cantidad = Integer.parseInt(inputCantidad.getText());
                 Item item = new Item(nombre, marca, precioUnitario, cantidad);
-                DBController.insertItem(item);
+                if(DBController.verifyItemInDatabase(item)){
+                    DBController.updateItem(item);
+                }else{
+                    DBController.insertItem(item);
+                }
                 Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
             }
         });
+    }
+    
+    private void deleteButtonAction(){
+        deleteBtn.setOnAction(e -> {
+            Alert alert = Alertas.confirmationAlert("Confirmación", "Alerta", "¿Seguro desea eliminar el item?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                DBController.deleteItem(item);
+                cleanInputText();
+            }    
+        });
+
     }
 
 }

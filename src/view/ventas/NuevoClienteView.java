@@ -7,10 +7,7 @@ package view.ventas;
 
 import controller.Alertas;
 import controller.DBController;
-import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -31,6 +28,11 @@ public class NuevoClienteView implements View {
     private TextField inputNombre, inputCedula, inputDireccion, inputTelefono;
     private Button saveBtn;
     private GridPane body;
+    private Stage stage;
+    
+    public NuevoClienteView(Stage stage){
+        this.stage = stage;
+    }
 
     @Override
     public Parent build() throws FileNotFoundException {
@@ -89,14 +91,10 @@ public class NuevoClienteView implements View {
     
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
-            try {
-                DBController.crearCliente(inputNombre.getText(), inputCedula.getText(), inputDireccion.getText(), inputTelefono.getText());
-                Alert alert = Alertas.informationAlert("Guardado", "Nuevo Cliente!", "Un nuevo cliente ha sido guardado en la base de datos.");
-                alert.showAndWait();
-                FerrelectricSBD.setScene(new VentaSimpleView().build());
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(NuevoClienteView.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            DBController.crearCliente(inputNombre.getText(), inputCedula.getText(), inputDireccion.getText(), inputTelefono.getText());
+            Alert alert = Alertas.informationAlert("Guardado", "Nuevo Cliente!", "Un nuevo cliente ha sido guardado en la base de datos.");
+            alert.showAndWait();
+            stage.close();
         });
     }
 }

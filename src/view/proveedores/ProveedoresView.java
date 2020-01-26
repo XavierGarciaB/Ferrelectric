@@ -5,8 +5,10 @@
  */
 package view.proveedores;
 
+import controller.DBController;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
@@ -22,22 +24,38 @@ import view.utils.GridComponents;
 public class ProveedoresView extends GridComponents{
     private VBox root;
     private String[] nombreCampos = {"Num. Factura","Proveedor","RUC","Fecha","Total"};
-    private String[] nombreFiltros = {"Num. Factura", "Proveedor", "RUC","Costo total", "Fecha"};
+    private String[] nombreFiltros = {"Nombre","Ruc","Fecha"};
     
     public ProveedoresView() throws FileNotFoundException{
-        super("Proveedores", new MainMenuView().build());
+        super("Proveedores", new MainMenuView());
     }
 
     public Parent build() throws FileNotFoundException {
         root = (VBox) super.build(nombreCampos, nombreFiltros);
         
-        for(CompraProveedor compra : dbController.getComprasProveedor()){
-            addRow(compra);
-        }
+        cargarFilas(dbController.getComprasProveedor());
         
         addButtonAction();
+        searchButtonAction();
         
         return root;
+    }
+    
+    private Parent buildFilter(List<CompraProveedor> ventasFiltrados) throws FileNotFoundException{
+        root = (VBox) super.build(nombreCampos, nombreFiltros);
+        
+        cargarFilas(ventasFiltrados);
+        
+        addButtonAction();
+        searchButtonAction();
+        
+        return root;
+    }
+    
+    private void cargarFilas(List<CompraProveedor> compras){
+        for(CompraProveedor compra : compras){
+            addRow(compra);
+        }
     }
     
     private void addButtonAction(){
@@ -47,6 +65,34 @@ public class ProveedoresView extends GridComponents{
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(ProveedoresView.class.getName()).log(Level.SEVERE, null, ex);
             }
+        });
+    }
+    
+    private void searchButtonAction(){
+        searchBtn.setOnAction(e -> {
+            // Volviendo a cargar todos los registros
+            if(input.getText().equals("")){
+                root.getChildren().clear();
+                contComponents.getChildren().clear();
+                try {
+                    FerrelectricSBD.setScene(this.build());
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(ProveedoresView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            // Cargando registros filtrados
+            else if(!(input.getText().equals("")) && filtros.getValue()!=null){
+                String filtroElegido = (String) filtros.getValue();
+                List<CompraProveedor> registroFiltrado = DBController.comprasFiltrados(input.getText().trim(), filtroElegido);
+                root.getChildren().clear();
+                contComponents.getChildren().clear();
+                try {
+                    FerrelectricSBD.setScene(this.buildFilter(registroFiltrado));
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(ProveedoresView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            System.out.println("Busqueda presionada");
         });
     }
     

@@ -58,5 +58,81 @@ public class Queries {
     public static final String storedSumarItems = "{call sumarCantidadItems(?, ?)}";
     
     public static final String storedVerificarProveedor = "{call verificarProveedor(?, ?, ?)}";
+    
+    public static final String storedUpdateItem = "{call updateItem(?, ?, ?, ?, ?)}";
+    
+    public static final String storedDeleteItem = "{call deleteItem(?)}";
+    
+    public static String filtrarItemPorNombre(String nombre){
+        return "select * from item where nombre like '%"+nombre+"%'";
+    }
+    
+    public static String filtrarItemPorMarca(String marca){
+        return "select * from item where marca like '%"+marca+"%'";
+    }
+    
+    public static String filtrarItemPorCosto(String costo){
+        return "select * from item where costo = "+costo;
+    }
+    
+    public static String filtrarVentaPorNombre(String nombre){
+        return "select f.numFactura as numFactura, c.nombre as nombre, c.cedula as cedula, f.fecha as fecha, total.total as total, dv.idVenta as DetalleVenta\n" +
+                "from factura f, cliente c, descripcionventa dv, (select f.numFactura as numFactura, sum(i.costo*dv.cantidad) as total\n" +
+                "												from descripcionventa dv, item i, factura f\n" +
+                "												where i.idItem=dv.idItem and f.numFactura=dv.numFactura\n" +
+                "												group by f.numFactura) as total \n" +
+                "where f.cedula=c.cedula and dv.numFactura=f.numFactura and total.numFactura=f.numFactura and c.nombre like '%"+nombre.trim()+"%'\n" +
+                "group by f.numFactura";
+    }
+    
+    public static String filtrarVentaPorCedula(String cedula){
+        return "select f.numFactura as numFactura, c.nombre as nombre, c.cedula as cedula, f.fecha as fecha, total.total as total, dv.idVenta as DetalleVenta\n" +
+                "from factura f, cliente c, descripcionventa dv, (select f.numFactura as numFactura, sum(i.costo*dv.cantidad) as total\n" +
+                "												from descripcionventa dv, item i, factura f\n" +
+                "												where i.idItem=dv.idItem and f.numFactura=dv.numFactura\n" +
+                "												group by f.numFactura) as total \n" +
+                "where f.cedula=c.cedula and dv.numFactura=f.numFactura and total.numFactura=f.numFactura and c.cedula = "+cedula.trim()+"\n" +
+                "group by f.numFactura;";
+    }
+    
+    public static String filtrarVentaPorFecha(String fecha){
+        return "select f.numFactura as numFactura, c.nombre as nombre, c.cedula as cedula, f.fecha as fecha, total.total as total, dv.idVenta as DetalleVenta\n" +
+                "from factura f, cliente c, descripcionventa dv, (select f.numFactura as numFactura, sum(i.costo*dv.cantidad) as total\n" +
+                "												from descripcionventa dv, item i, factura f\n" +
+                "												where i.idItem=dv.idItem and f.numFactura=dv.numFactura\n" +
+                "												group by f.numFactura) as total \n" +
+                "where f.cedula=c.cedula and dv.numFactura=f.numFactura and total.numFactura=f.numFactura and f.fecha = "+fecha.trim()+"\n" +
+                "group by f.numFactura;";
+    }
+    
+    public static String filtrarCompraPorNombre(String nombre){
+        return "select cp.numFactura as numFactura, p.nombre as nombre, p.ruc as ruc, cp.fecha as fecha, total.total as Total, dc.idDetalleCompra as DetalleCompra\n" +
+                "from compraproveedor cp, proveedor p, detallecompra dc, (select cp.numFactura as numFactura, sum(i.costo*dc.cantidad) as total\n" +
+                "														from detallecompra dc, item i, compraproveedor cp\n" +
+                "														where i.idItem=dc.idItem and cp.numFactura=dc.numFactura\n" +
+                "														group by cp.numFactura) as total\n" +
+                "where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura and p.nombre like '%"+nombre.trim()+"%'\n" +
+                "group by cp.numFactura";
+    }
+    
+    public static String filtrarCompraPorRuc(String ruc){
+        return "select cp.numFactura as numFactura, p.nombre as nombre, p.ruc as ruc, cp.fecha as fecha, total.total as Total, dc.idDetalleCompra as DetalleCompra\n" +
+                "from compraproveedor cp, proveedor p, detallecompra dc, (select cp.numFactura as numFactura, sum(i.costo*dc.cantidad) as total\n" +
+                "														from detallecompra dc, item i, compraproveedor cp\n" +
+                "														where i.idItem=dc.idItem and cp.numFactura=dc.numFactura\n" +
+                "														group by cp.numFactura) as total\n" +
+                "where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura and p.ruc = "+ruc.trim()+"\n" +
+                "group by cp.numFactura";
+    }
+    
+    public static String filtrarCompraPorFecha(String fecha){
+        return "select cp.numFactura as numFactura, p.nombre as nombre, p.ruc as ruc, cp.fecha as fecha, total.total as Total, dc.idDetalleCompra as DetalleCompra\n" +
+                "from compraproveedor cp, proveedor p, detallecompra dc, (select cp.numFactura as numFactura, sum(i.costo*dc.cantidad) as total\n" +
+                "														from detallecompra dc, item i, compraproveedor cp\n" +
+                "														where i.idItem=dc.idItem and cp.numFactura=dc.numFactura\n" +
+                "														group by cp.numFactura) as total\n" +
+                "where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura and cp.fecha = "+fecha.trim()+"\n" +
+                "group by cp.numFactura";
+    }
 
 }

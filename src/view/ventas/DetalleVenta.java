@@ -40,7 +40,7 @@ public class DetalleVenta implements View {
         content = new VBox();
         lbl_nombre = new Label("Detalle de Venta");
         header = new Header("Detalle");
-        header.addBackEventListener(new VentasView().build());
+        header.addBackEventListener(new VentasView());
         
         // SET STYLES
         content.getStyleClass().add("cont_view");
@@ -66,7 +66,7 @@ public class DetalleVenta implements View {
         table.getItems().clear();
         
         //SE CARGAN LAS FACTURAS Y SE LAS AGREGA A LA TABLA
-        for(Detalle detalle: DBController.getDetalles(venta.getNumFactura())){
+        for(Detalle detalle: DBController.getDetalles(venta.getNumFactura(), true)){
             table.getItems().add(detalle);
         }
         

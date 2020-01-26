@@ -22,6 +22,7 @@ import models.CompraProveedor;
 import models.Detalle;
 import models.Empleado;
 import models.Item;
+import models.Listable;
 import models.Venta;
 
 /**
@@ -121,6 +122,12 @@ public class DBController {
         return ventas;
     }
     
+    // DEVUELVE TRUE SI EXISTE UN ITEM, FALSE EN CASO DE NO EXISTIR
+    public static boolean verifyItemInDatabase(Item item){
+        int idItem = obtenerIdItem(item.getNombre());
+        return idItem!=0;
+    }
+    
     public static boolean insertItem(Item item){
         try {
             PreparedStatement ps = conn.prepareStatement(Queries.insertItem);
@@ -137,10 +144,46 @@ public class DBController {
         return true;
     }
     
-    public static List<Detalle> getDetalles(String numFactura){
-        List<Detalle> detalles = new ArrayList<>();
+    public static boolean updateItem(Item item){
         try {
-            CallableStatement  cs = conn.prepareCall(Queries.storedDetallesCompra);
+            CallableStatement  cs = conn.prepareCall(Queries.storedUpdateItem);
+            cs.setInt(1, obtenerIdItem(item.getNombre()));
+            cs.setString(2, item.getNombre().toUpperCase());
+            cs.setString(3, item.getMarca().toUpperCase());
+            cs.setDouble(4, item.getPrecioUnidad());
+            cs.setInt(5, item.getCantidad());
+            cs.execute();
+            System.out.println("Item Guardado");
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+    
+    public static boolean deleteItem(Item item){
+        try {
+            CallableStatement  cs = conn.prepareCall(Queries.storedDeleteItem);
+            cs.setInt(1, obtenerIdItem(item.getNombre()));
+            cs.execute();
+            System.out.println("Item Eliminado");
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+    
+    // TRUE SI ES UNA VENTA, FALSE SI ES UNA COMPRA
+    public static List<Detalle> getDetalles(String numFactura, boolean venta){
+        List<Detalle> detalles = new ArrayList<>();
+        CallableStatement  cs;
+        try{
+            if(venta){
+            cs = conn.prepareCall(Queries.storedDetallesVenta);
+            }else{
+                cs = conn.prepareCall(Queries.storedDetallesCompra);
+            }
             cs.setInt(1, Integer.valueOf(numFactura));
             ResultSet result = cs.executeQuery();
             while(result.next()){
@@ -150,9 +193,9 @@ public class DBController {
                 Detalle detalle = new Detalle(nombre, cantidad, costo);
                 detalles.add(detalle);
             }
-        } catch (SQLException ex) {
+        }catch (SQLException ex) {
             Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
         return detalles;
     } 
     
@@ -316,5 +359,116 @@ public class DBController {
         }
         return false;
     }
-
+    
+    public static List<Item> itemsFiltrados(String valor, String filtro){
+        List<Item> items = new ArrayList<>();
+        try {
+            PreparedStatement ps = null;
+            int tipoFiltro = filtrosDeItems(filtro);
+            if(tipoFiltro==1) ps = conn.prepareStatement(Queries.filtrarItemPorNombre(valor));
+            else if(tipoFiltro==2) ps = conn.prepareStatement(Queries.filtrarItemPorMarca(valor));
+            else if(tipoFiltro==3) ps = conn.prepareStatement(Queries.filtrarItemPorCosto(valor));
+            ResultSet result = ps.executeQuery(); 
+            while(result.next()){
+                String nombre = result.getString("nombre");
+                String marca = result.getString("marca");
+                double precioUnitario = result.getDouble("costo");
+                int cantidad = result.getInt("cantidad");
+                items.add(new Item(nombre, marca, precioUnitario, cantidad));                 
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return items;
+    }
+    
+    private static int filtrosDeItems(String filtro){
+        switch(filtro){
+            case "Nombre":
+                return 1;
+            case "Marca":
+                return 2;
+            case "Costo":
+                return 3;
+        }
+        return 0;
+    }
+    
+    public static List<Venta> ventasFiltrados(String valor, String filtro){
+        List<Venta> ventas = new ArrayList<>();
+        try {
+            PreparedStatement ps = null;
+            int tipoFiltro = filtrosDeVentas(filtro);
+            if(tipoFiltro==1) ps = conn.prepareStatement(Queries.filtrarVentaPorNombre(valor));
+            else if(tipoFiltro==2) ps = conn.prepareStatement(Queries.filtrarVentaPorCedula(valor));
+            else if(tipoFiltro==3) ps = conn.prepareStatement(Queries.filtrarVentaPorFecha(valor));
+            ResultSet result = ps.executeQuery();
+            
+            while(result.next()){
+                String numFactura = String.valueOf(result.getInt("numfactura"));
+                String nombre = result.getString("nombre");
+                String cedula = result.getString("cedula");
+                Date fecha = result.getDate("fecha");
+                double total = result.getDouble("total");
+                ventas.add(new Venta(numFactura, nombre, cedula, fecha, total, empleado.getCedula()));                 
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return ventas;
+    }
+    
+    private static int filtrosDeVentas(String filtro){
+        switch(filtro){
+            case "Nombre":
+                return 1;
+            case "Cedula":
+                return 2;
+            case "Fecha":
+                return 3;
+        }
+        return 0;
+    }
+    
+    public static List<CompraProveedor> comprasFiltrados(String valor, String filtro){
+        List<CompraProveedor> compras = new ArrayList<>();
+        try {
+            PreparedStatement ps = null;
+            int tipoFiltro = filtrosDeCompras(filtro);
+            if(tipoFiltro==1) ps = conn.prepareStatement(Queries.filtrarCompraPorNombre(valor));
+            else if(tipoFiltro==2) ps = conn.prepareStatement(Queries.filtrarCompraPorRuc(valor));
+            else if(tipoFiltro==3) ps = conn.prepareStatement(Queries.filtrarCompraPorFecha(valor));
+            ResultSet result = ps.executeQuery();
+            
+            while(result.next()){
+                String numFactura = String.valueOf(result.getInt("numfactura"));
+                String nombre = result.getString("nombre");
+                String ruc = result.getString("ruc");
+                Date fecha = result.getDate("fecha");
+                double total = result.getDouble("total");
+                compras.add(new CompraProveedor(numFactura, nombre, ruc, fecha, total, empleado.getCedula()));                 
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return compras;
+    }
+    
+    private static int filtrosDeCompras(String filtro){
+        switch(filtro){
+            case "Nombre":
+                return 1;
+            case "Ruc":
+                return 2;
+            case "Fecha":
+                return 3;
+        }
+        return 0;
+    }
 }

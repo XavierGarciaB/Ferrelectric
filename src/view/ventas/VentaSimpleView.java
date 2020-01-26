@@ -46,7 +46,7 @@ public class VentaSimpleView implements View {
         root = new VBox();
         content = new VBox();
         header = new Header("Venta");
-        header.addBackEventListener(new VentasView().build());
+        header.addBackEventListener(new VentasView());
         name = new Label("Venta");
         body = new GridPane();
         agregarDetalles = new Button("Añadir detalles");
@@ -100,19 +100,18 @@ public class VentaSimpleView implements View {
     
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
-            if(inputNumFactura.getText().equals("") || inputCliente.getText().equals("") || inputCedula.getText().equals("")){
-                Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
-            }else{
+            boolean existeCliente = DBController.verificarCliente(inputCliente.getText().trim(), inputCedula.getText().trim());
+            if(!existeCliente){
                 try {
-                    existeCliente();   
-                    venta = createVenta();                    
-                    // EMPEZAR A TRABAJAR CON MYSQL DESDE AQUI
-                    DBController.guardarFactura(adv.devolverListaDetalles(), venta);
-                    Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
-                    FerrelectricSBD.setScene(new VentasView().build());
+                    Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
+                    abrirNuevoClienteView();
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(ItemView.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(VentaSimpleView.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }else{
+                venta = createVenta();
+                DBController.guardarFactura(adv.devolverListaDetalles(), venta);
+                Alertas.informationAlert("SAVE", "Datos guardados", "Los datos ingresados se han guardado en la base de datos").showAndWait();
             }
         });
     }
@@ -120,14 +119,14 @@ public class VentaSimpleView implements View {
     private void addDetalleButtonAction(){
         agregarDetalles.setOnAction(e -> {
             try {
-                if(inputNumFactura.getText().equals("") || inputCliente.getText().equals("") || inputCedula.getText().equals("")){
+                boolean existeCliente = DBController.verificarCliente(inputCliente.getText().trim(), inputCedula.getText().trim());
+                if(!existeCliente){
                     Alertas.errorAlert("ERROR", "Error de datos", "Los datos ingresados no son correctos").showAndWait();
-                }else{
-                    existeCliente();
-                    venta = createVenta(); 
+                    abrirNuevoClienteView();
+                }else{ 
                     Stage stage = new Stage();
                     adv = new AgregarDetalleView(stage); 
-                    Scene scene = new Scene(adv.build(), 1200, 400);
+                    Scene scene = new Scene(adv.build(), 1000, 400);
                     scene.getStylesheets().add(PATHS.STYLESHEET_PATH);
                     stage.setScene(scene);
                     stage.setTitle("Agregar detalles");
@@ -140,11 +139,14 @@ public class VentaSimpleView implements View {
         });
     }
     
-    private void existeCliente() throws FileNotFoundException{
-        boolean existeCliente = DBController.verificarCliente(inputCliente.getText(), inputCedula.getText());
-        if(!existeCliente){           
-            FerrelectricSBD.setScene(new NuevoClienteView().build());
-        }
+    private void abrirNuevoClienteView() throws FileNotFoundException{
+        Stage stage = new Stage();
+        NuevoClienteView ncv = new NuevoClienteView(stage); 
+        Scene scene = new Scene(ncv.build(), 1100, 600);
+        scene.getStylesheets().add(PATHS.STYLESHEET_PATH);
+        stage.setScene(scene);
+        stage.setTitle("Nuevo Cliente");
+        stage.showAndWait();
     }
     
     private Venta createVenta(){

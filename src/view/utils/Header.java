@@ -8,6 +8,8 @@ package view.utils;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -17,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import res.PATHS;
+import view.View;
 
 /**
  *
@@ -62,10 +65,14 @@ public class Header {
         return header;
     }
     
-    public void addBackEventListener(Parent root){
-        if(null != root){
+    public void addBackEventListener(View view){
+        if(null != view){
             backCont.setOnMouseClicked(e ->{
-                FerrelectricSBD.setScene(root);
+                try {
+                    FerrelectricSBD.setScene(view.build());
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Header.class.getName()).log(Level.SEVERE, null, ex);
+                }
             });
         }else{
             backCont.setVisible(false);

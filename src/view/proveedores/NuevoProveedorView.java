@@ -7,10 +7,7 @@ package view.proveedores;
 
 import controller.Alertas;
 import controller.DBController;
-import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -18,9 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import view.View;
-import view.ventas.NuevoClienteView;
-import view.ventas.VentaSimpleView;
 
 /**
  *
@@ -32,12 +28,17 @@ public class NuevoProveedorView implements View {
     private TextField inputNombre, inputRuc, inputTelefono;
     private Button saveBtn;
     private GridPane body;
+    private Stage stage;
+    
+    public NuevoProveedorView(Stage stage){
+        this.stage = stage;
+    }
 
     @Override
     public Parent build() throws FileNotFoundException {
         root = new VBox();
         cont = new VBox();
-        Label titulo = new Label("Nuevo Cliente");
+        Label titulo = new Label("Nuevo Proveedor");
         saveBtn = new Button("Guardar");
         
         // STYLES
@@ -60,7 +61,7 @@ public class NuevoProveedorView implements View {
     private void body(){
         body = new GridPane();
         labelNombre = new Label("Nombre");
-        labelRuc = new Label("Cedula");
+        labelRuc = new Label("Ruc");
         labelTelefono = new Label("Telefono");
         inputNombre = new TextField();
         inputRuc = new TextField();
@@ -84,14 +85,10 @@ public class NuevoProveedorView implements View {
     
     private void saveButtonAction(){
         saveBtn.setOnAction(e ->{
-            try {
-                DBController.crearProveedor(inputNombre.getText(), inputRuc.getText(), inputTelefono.getText());
-                Alert alert = Alertas.informationAlert("Guardado", "Nuevo Proveedor!", "Un nuevo proveedor ha sido guardado en la base de datos.");
-                alert.showAndWait();
-                FerrelectricSBD.setScene(new CompraProveedorView().build());
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(NuevoClienteView.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            DBController.crearProveedor(inputNombre.getText(), inputRuc.getText(), inputTelefono.getText());
+            Alert alert = Alertas.informationAlert("Guardado", "Nuevo Proveedor!", "Un nuevo proveedor ha sido guardado en la base de datos.");
+            alert.showAndWait();
+            stage.close();
         });
     }
     

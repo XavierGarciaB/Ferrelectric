@@ -5,8 +5,10 @@
  */
 package view.inventario;
 
+import controller.DBController;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Parent;
@@ -21,23 +23,40 @@ import view.utils.GridComponents;
  */
 public class InventarioView extends GridComponents{
     private VBox root;
-    private final String[] lbl_Filtros = {"Nombre","Marca","Precio Unitario"};
+    private final String[] lbl_Filtros = {"Nombre","Marca","Costo"};
     private final String[] lbl_Nombres = {"Nombre","Marca","Precio Unitario","Cantidad"};
     
     public InventarioView() throws FileNotFoundException{
-        super("Inventario", new MainMenuView().build());
+        super("Inventario", new MainMenuView());
     }
 
     public Parent build() throws FileNotFoundException {
         root = (VBox) super.build(lbl_Nombres, lbl_Filtros);
         
-        for(Item item : dbController.getItems()){
-            addRow(item);
-        }
+        cargarFilas(dbController.getItems());
         
         addButtonAction();
+        searchButtonAction();
         
         return root;
+    }
+    
+    private Parent buildFilter(List<Item> itemsFiltrados) throws FileNotFoundException{
+        root = (VBox) super.build(lbl_Nombres, lbl_Filtros);
+        
+        cargarFilas(itemsFiltrados);
+        
+        addButtonAction();
+        searchButtonAction();
+        
+        return root;
+    }
+    
+    private void cargarFilas(List<Item> items){
+        for(Item item : items){
+            System.out.println(item.getNombre());
+            addRow(item);
+        }
     }
     
     private void addButtonAction(){
@@ -49,4 +68,33 @@ public class InventarioView extends GridComponents{
             }
         });
     }
+    
+    private void searchButtonAction(){
+        searchBtn.setOnAction(e -> {
+            // Volviendo a cargar todos los registros
+            if(input.getText().equals("")){
+                root.getChildren().clear();
+                contComponents.getChildren().clear();
+                try {
+                    FerrelectricSBD.setScene(this.build());
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(InventarioView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            // Cargando registros filtrados
+            else if(!(input.getText().equals("")) && filtros.getValue()!=null){
+                String filtroElegido = (String) filtros.getValue();
+                List<Item> registroFiltrado = DBController.itemsFiltrados(input.getText().trim(), filtroElegido);
+                root.getChildren().clear();
+                contComponents.getChildren().clear();
+                try {
+                    FerrelectricSBD.setScene(this.buildFilter(registroFiltrado));
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(InventarioView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            System.out.println("Busqueda presionada");
+        });
+    }
+    
 }

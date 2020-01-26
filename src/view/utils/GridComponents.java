@@ -29,9 +29,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import models.CompraProveedor;
+import models.Item;
 import models.Listable;
 import models.Venta;
 import res.PATHS;
+import view.View;
+import view.inventario.ItemView;
 import view.proveedores.DetalleCompra;
 import view.ventas.DetalleVenta;
 
@@ -39,13 +42,13 @@ import view.ventas.DetalleVenta;
  *
  * @author xavic
  */
-public class GridComponents{
+public class GridComponents implements View{
     private VBox root;
-    private GridPane contComponents;
-    private Button searchBtn;
+    protected GridPane contComponents;
+    protected Button searchBtn;
     protected StackPane addBtn;
-    private TextField input;
-    private ComboBox filtros;
+    protected TextField input;
+    protected ComboBox filtros;
     private Label lblFiltro;
     private HBox contBusqueda;
     private AnchorPane contInicial;
@@ -54,7 +57,7 @@ public class GridComponents{
     private int rowsNumber;
     protected DBController dbController;
     
-    public GridComponents(String headerTitle, Parent scenePrevia) throws FileNotFoundException{
+    public GridComponents(String headerTitle, View scenePrevia) throws FileNotFoundException{
         dbController = new DBController();
         header = new Header(headerTitle);
         header.addBackEventListener(scenePrevia);
@@ -66,9 +69,10 @@ public class GridComponents{
         contComponents = new GridPane();
         scroll = new ScrollPane(contComponents);
         root.setSpacing(10);
-        
+
         crearBusqueda(nombreFiltros);
         
+        contComponents.getChildren().clear();
         crearCuerpo(nombreCampos);
         
         root.getChildren().addAll(header.render(), contInicial, scroll);
@@ -103,7 +107,7 @@ public class GridComponents{
         
     }
     
-    private void crearCuerpo(String[] nombreCampos){
+    protected void crearCuerpo(String[] nombreCampos){
         // Crea la cabecera de la tabla
         for(int i = 0; i < nombreCampos.length; i++){
             Label nombre = new Label(nombreCampos[i]);
@@ -157,7 +161,21 @@ public class GridComponents{
                     Logger.getLogger(GridComponents.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            if(row instanceof Item){
+                try {
+                    Item item = (Item) row;
+                    FerrelectricSBD.setScene(new ItemView(item).build());
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(GridComponents.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         });
+    }
+
+    @Override
+    public Parent build() throws FileNotFoundException {
+        // NO HACE NADA
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     
