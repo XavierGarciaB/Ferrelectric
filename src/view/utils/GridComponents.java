@@ -5,21 +5,28 @@
  */
 package view.utils;
 
+import Tablas.CargarFactura;
+import Tablas.FacturasCo;
 import controller.DBController;
 import ferrelectric.sbd.FerrelectricSBD;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -28,7 +35,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import models.CompraProveedor;
+import models.Detalle;
 import models.Item;
 import models.Listable;
 import models.Venta;
@@ -56,6 +65,7 @@ public class GridComponents implements View{
     private Header header;
     private int rowsNumber;
     protected DBController dbController;
+    private Button reporte;
     
     public GridComponents(String headerTitle, View scenePrevia) throws FileNotFoundException{
         dbController = new DBController();
@@ -89,8 +99,17 @@ public class GridComponents implements View{
         input = new TextField();
         lblFiltro = new Label("Filtrar");
         searchBtn = new Button("Buscar");
+        reporte = new Button("Reporte Dia");
         
-        contBusqueda.getChildren().addAll(lblFiltro, input, filtros, searchBtn);
+        reporte.setOnMouseClicked(e->{
+            Scene scene = new Scene(abrirReporte(),600, 800);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.show();
+        
+        });
+        
+        contBusqueda.getChildren().addAll(lblFiltro, input, filtros, searchBtn, reporte);
         contBusqueda.setSpacing(10);
         
         ImageView add = new ImageView(new Image(new FileInputStream(PATHS.IMAGE_PATH+"add-icon.png")));
@@ -102,7 +121,8 @@ public class GridComponents implements View{
         
         contInicial = new AnchorPane();
         AnchorPane.setRightAnchor(addBtn, 10.0);
-        AnchorPane.setLeftAnchor(contBusqueda, 10.0);
+        AnchorPane.setLeftAnchor(contBusqueda, 10.0);     
+
         contInicial.getChildren().addAll(contBusqueda, addBtn);
         
     }
@@ -143,6 +163,13 @@ public class GridComponents implements View{
         rowsNumber++;
     }
     
+    private VBox abrirReporte(){
+        VBox roottemp = new VBox(aggContenido());
+        Label total = new Label("Total dia: "+DBController.getTotalDia());
+        roottemp.getChildren().add(total);
+        return roottemp;        
+    }
+    
     private void asignarReferencia(Parent cont, Listable row){
         cont.setOnMouseClicked(e ->{
             if(row instanceof Venta){
@@ -176,6 +203,30 @@ public class GridComponents implements View{
     public Parent build() throws FileNotFoundException {
         // NO HACE NADA
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public TableView aggContenido(){
+        TableView tabla = new TableView();
+        ArrayList<String> campos = new ArrayList<>();
+        campos.add("nombre");campos.add("cantidad");campos.add("costo");
+        
+        //CREACION DE LAS  COLUNMAS Y SUS CELDAS
+        for (String campo: campos){
+            TableColumn<String, Detalle> colum = new TableColumn<>(campo);
+            colum.setCellValueFactory(new PropertyValueFactory<>(campo.toLowerCase()));
+            tabla.getColumns().add(colum);
+        }
+        //EVITA QUE SE APILEN LOS DATOS CADA VEZ QUE SE CORRE
+        tabla.getItems().clear();
+        
+        //SE CARGAN LAS FACTURAS Y SE LAS AGREGA A LA TABLA
+        
+        for(Detalle fac: DBController.getReporte()){
+            tabla.getItems().add(fac);
+        }
+        
+        return tabla;
+                
     }
     
     

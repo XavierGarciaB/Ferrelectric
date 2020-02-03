@@ -24,6 +24,7 @@ import models.Empleado;
 import models.Item;
 import models.Listable;
 import models.Venta;
+import view.ventas.DetalleVenta;
 
 /**
  *
@@ -470,5 +471,44 @@ public class DBController {
                 return 3;
         }
         return 0;
+    }
+    
+    public static List<Detalle> getReporte(){
+        List<Detalle> listita = new ArrayList<>();
+        try {
+            PreparedStatement ps = conn.prepareStatement(Queries.getReporte);
+            ResultSet result = ps.executeQuery();
+            
+            while(result.next()){
+                String nombre = result.getString("nombre");
+                int cantidad = result.getInt("cantidad");
+                double costo = result.getDouble("costo");
+                listita.add(new Detalle(nombre, cantidad, costo));                 
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return listita;                        
+    }
+    
+    public static String getTotalDia(){
+        double total = 0;
+        try {
+            PreparedStatement ps = conn.prepareStatement(Queries.getReporte);
+            ResultSet result = ps.executeQuery();
+            
+            while(result.next()){
+                int cantidad = result.getInt("cantidad");
+                double costo = result.getDouble("costo");
+                total+=cantidad*costo;                 
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return total+"";                        
     }
 }

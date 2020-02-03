@@ -1,5 +1,4 @@
 use mydb;
-#select * from lote;
 select * from factura;
 select * from proveedor;
 select * from compraproveedor;
@@ -37,6 +36,69 @@ select f.numFactura, sum(i.costo*dv.cantidad) as total
 from descripcionventa dv, item i, factura f
 where i.idItem=dv.idItem and f.numFactura=dv.numFactura
 group by f.numFactura;
+
+### ITEMS POR NOMBRE
+select * from item where nombre like '%?%';
+
+### ITEMS POR MARCA
+select * from item where marca like '%?%';
+
+### ITEMS POR COSTO
+select * from item where costo = ?;
+
+### VENTAS POR NOMBRE
+select f.numFactura as numFactura, c.nombre as nombre, c.cedula as cedula, f.fecha as fecha, total.total as total, dv.idVenta as DetalleVenta
+from factura f, cliente c, descripcionventa dv, (select f.numFactura as numFactura, sum(i.costo*dv.cantidad) as total
+												from descripcionventa dv, item i, factura f
+												where i.idItem=dv.idItem and f.numFactura=dv.numFactura
+												group by f.numFactura) as total 
+where f.cedula=c.cedula and dv.numFactura=f.numFactura and total.numFactura=f.numFactura and c.nombre like '%?%'
+group by f.numFactura; 
+
+### VENTAS POR CEDULA
+select f.numFactura as numFactura, c.nombre as nombre, c.cedula as cedula, f.fecha as fecha, total.total as total, dv.idVenta as DetalleVenta
+from factura f, cliente c, descripcionventa dv, (select f.numFactura as numFactura, sum(i.costo*dv.cantidad) as total
+												from descripcionventa dv, item i, factura f
+												where i.idItem=dv.idItem and f.numFactura=dv.numFactura
+												group by f.numFactura) as total 
+where f.cedula=c.cedula and dv.numFactura=f.numFactura and total.numFactura=f.numFactura and c.cedula = ?
+group by f.numFactura; 
+
+### VENTAS POR FECHA
+select f.numFactura as numFactura, c.nombre as nombre, c.cedula as cedula, f.fecha as fecha, total.total as total, dv.idVenta as DetalleVenta
+from factura f, cliente c, descripcionventa dv, (select f.numFactura as numFactura, sum(i.costo*dv.cantidad) as total
+												from descripcionventa dv, item i, factura f
+												where i.idItem=dv.idItem and f.numFactura=dv.numFactura
+												group by f.numFactura) as total 
+where f.cedula=c.cedula and dv.numFactura=f.numFactura and total.numFactura=f.numFactura and f.fecha ='2019-09-19'
+group by f.numFactura; 
+
+### COMPRAS POR NOMBRE
+select cp.numFactura as numFactura, p.nombre as nombre, p.ruc as ruc, cp.fecha as fecha, total.total as Total, dc.idDetalleCompra as DetalleCompra
+from compraproveedor cp, proveedor p, detallecompra dc, (select cp.numFactura as numFactura, sum(i.costo*dc.cantidad) as total
+														from detallecompra dc, item i, compraproveedor cp
+														where i.idItem=dc.idItem and cp.numFactura=dc.numFactura
+														group by cp.numFactura) as total
+where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura and p.nombre like '%%'
+group by cp.numFactura;
+
+### COMPRAS POR RUC
+select cp.numFactura as numFactura, p.nombre as nombre, p.ruc as ruc, cp.fecha as fecha, total.total as Total, dc.idDetalleCompra as DetalleCompra
+from compraproveedor cp, proveedor p, detallecompra dc, (select cp.numFactura as numFactura, sum(i.costo*dc.cantidad) as total
+														from detallecompra dc, item i, compraproveedor cp
+														where i.idItem=dc.idItem and cp.numFactura=dc.numFactura
+														group by cp.numFactura) as total
+where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura and cp.fecha = ?
+group by cp.numFactura;
+
+### COMPRAS POR FECHA
+select cp.numFactura as numFactura, p.nombre as nombre, p.ruc as ruc, cp.fecha as fecha, total.total as Total, dc.idDetalleCompra as DetalleCompra
+from compraproveedor cp, proveedor p, detallecompra dc, (select cp.numFactura as numFactura, sum(i.costo*dc.cantidad) as total
+														from detallecompra dc, item i, compraproveedor cp
+														where i.idItem=dc.idItem and cp.numFactura=dc.numFactura
+														group by cp.numFactura) as total
+where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura and p.ruc = ?
+group by cp.numFactura;
 
 -- ### INSERTAR UN ITEM
 -- INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES (?, ?, ?, ?);
@@ -85,6 +147,22 @@ BEGIN
 END //
 DELIMITER ;
 
+### UPDATE TODOS LOS VALORES DE UN ITEM
+DELIMITER //
+CREATE PROCEDURE updateItem(in id int, in nombreItem varchar(40), in marcaItem varchar(40), in costoItem double, in cantidadItem int)
+BEGIN
+	UPDATE item SET nombre=nombreItem,  marca=marcaItem, costo=costoItem, cantidad=cantidadItem WHERE idItem=id;
+END //
+DELIMITER ;
+
+### ELIMINAR UN ITEM DEL DATABASE
+DELIMITER //
+CREATE PROCEDURE deleteItem(in id int)
+BEGIN
+	DELETE FROM item WHERE idItem=id;
+END //
+DELIMITER ;
+
 ### UPDATE CANTIDAD DE ITEMS LUEGO DE GRABAR UNA NUEVA VENTA
 DELIMITER //
 CREATE PROCEDURE restarCantidadItems(in id int, in cantidadRetirada int)
@@ -114,8 +192,8 @@ DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER crearClienteContinuacion BEFORE INSERT ON cliente
-FOR EACH ROW 
-BEGIN
+FOR EACH ROW
+BEGIN 
 	IF NEW.telefono="" THEN
 		SET NEW.telefono = "None";
 	END IF;
@@ -137,3 +215,21 @@ BEGIN
 	SELECT ruc into rucExiste from proveedor where nombre=nombreProveedor and ruc=rucProveedor;
 END //
 DELIMITER ;
+
+### INDEX EN EL NOMBRE DE UN ITEM PARA UNA BUSQUEDA MAS OPTIMIZADA
+CREATE INDEX nombreItem on item(nombre);
+
+### INDEX EN EL NOMBRE DE UN PROVEEDOR PARA UNA BUSQUEDA MAS OPTIMIZADA
+### INDEX EN FECHA DE UNA COMPRA AL PROVEEDOR
+CREATE INDEX nombreProveedor on proveedor(nombre);
+CREATE INDEX fechaCompra on compraproveedor(fecha);
+
+### INDEX EN EL NOMBRE DE UN CLIENTE PARA UNA BUSQUEDA MAS OPTIMIZADA
+### INDEX EN FECHA DE UNA FACTURA EN UNA VENTA
+CREATE INDEX cliente on cliente(nombre);
+CREATE INDEX fechaFactura on factura(fecha);
+
+create view  ReporteDiario as 
+	select i.nombre, dv.cantidad, i.costo from descripcionventa dv, item i, factura f
+	where dv.numfactura=numFactura and dv.idItem=i.idItem and f.fecha= (select CURDATE());
+    

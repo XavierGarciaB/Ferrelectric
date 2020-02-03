@@ -134,5 +134,8 @@ public class Queries {
                 "where cp.numFactura=dc.numFactura and cp.ruc=p.ruc and total.numFactura=cp.numFactura and cp.fecha = "+fecha.trim()+"\n" +
                 "group by cp.numFactura";
     }
+    
+    public static String getReporte="select * from ReporteDiario";
+    public static String getTotal = "select sum(costo) from ReporteDiario";
 
 }
