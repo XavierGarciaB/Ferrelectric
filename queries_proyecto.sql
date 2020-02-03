@@ -1,4 +1,5 @@
-select * from lote;
+use mydb;
+#select * from lote;
 select * from factura;
 select * from proveedor;
 select * from compraproveedor;
@@ -37,26 +38,26 @@ from descripcionventa dv, item i, factura f
 where i.idItem=dv.idItem and f.numFactura=dv.numFactura
 group by f.numFactura;
 
-### INSERTAR UN ITEM
-INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES (?, ?, ?, ?);
+-- ### INSERTAR UN ITEM
+-- INSERT INTO `mydb`.`Item` (`Nombre`, `Costo`, `Marca`,`Cantidad`) VALUES (?, ?, ?, ?);
 
-### INSERTAR UNA FACTURA
-INSERT INTO `mydb`.`Factura` (`numFactura`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (?, ?, ?, ?);
+-- ### INSERTAR UNA FACTURA
+-- INSERT INTO `mydb`.`Factura` (`numFactura`, `cedulaEmpleado`, `cedula`, `fecha`) VALUES (?, ?, ?, ?);
 
-### INSERTAR UN DETALLE A UNA FACTURA
-INSERT INTO `mydb`.`DescripcionVenta` (`Cantidad`, `numFactura`, `idItem`) VALUES (?, ?, ?);
+-- ### INSERTAR UN DETALLE A UNA FACTURA
+-- INSERT INTO `mydb`.`DescripcionVenta` (`Cantidad`, `numFactura`, `idItem`) VALUES (?, ?, ?);
 
-### INSERTAR UN CLIENTE
-INSERT INTO `mydb`.`Cliente` (`Cedula`, `Nombre`, `Direccion`, `Telefono`) VALUES (?, ?, ?, ?);
+-- ### INSERTAR UN CLIENTE
+-- INSERT INTO `mydb`.`Cliente` (`Cedula`, `Nombre`, `Direccion`, `Telefono`) VALUES (?, ?, ?, ?);
 
-### INSERTAR UN PROVEEDOR
-INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES (?, ?, ?);
+-- ### INSERTAR UN PROVEEDOR
+-- INSERT INTO `mydb`.`Proveedor` (`Nombre`, `Telefono`, `Ruc`) VALUES (?, ?, ?);
 
-### INSERTAR UNA COMPRA A PROVEEDOR
-INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `ruc`, `cedulaEmpleado`) VALUES (?, ?, ?, ?);
+-- ### INSERTAR UNA COMPRA A PROVEEDOR
+-- INSERT INTO `mydb`.`CompraProveedor` (`numFactura`, `Fecha`, `ruc`, `cedulaEmpleado`) VALUES (?, ?, ?, ?);
 
-### INSERTAR UNA DESCRIPCION DE COMPRA A PROVEEDOR
-INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `idItem`, `numFactura`) VALUES (?, ?, ?);
+-- ### INSERTAR UNA DESCRIPCION DE COMPRA A PROVEEDOR
+-- INSERT INTO `mydb`.`DetalleCompra` (`Cantidad`, `idItem`, `numFactura`) VALUES (?, ?, ?);
 
 ### BUSCAR DESCRIPCION DE VENTA A CLIENTES POR NUMFACTURA EN DESCRIPCION DE VENTAS
 DELIMITER //
@@ -113,8 +114,8 @@ DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER crearClienteContinuacion BEFORE INSERT ON cliente
-FOR EACH ROW FOLLOWS crearCliente
-BEGIN 
+FOR EACH ROW 
+BEGIN
 	IF NEW.telefono="" THEN
 		SET NEW.telefono = "None";
 	END IF;

@@ -17,8 +17,8 @@ import java.util.logging.Logger;
  */
 public class Connector {
     private static Connection conexion;
-    private static final String user = "pma";  // COLOCAR SU USUARIO    
-    private static final String password = "PASSWORD";  // COLOCAR SU CONTRASEÑA
+    private static final String user = "root";  // COLOCAR SU USUARIO    
+    private static final String password = "pass";  // COLOCAR SU CONTRASEÑA
     private static final String url = "jdbc:mysql://localhost:3306/mydb?serverTimezone=UTC";
     
     public static void conectar(){
